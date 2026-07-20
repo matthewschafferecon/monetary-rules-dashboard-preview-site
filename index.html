@@ -1,0 +1,1415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AIER monetary-policy rule prescriptions and historical estimates.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2300609C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia' font-size='40' fill='white'%3EA%3C/text%3E%3C/svg%3E">
+  <title>AIER Monetary Rules Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --black: #000000;
+      --blue: #00609C;
+      --grey: #797D82;
+      --orange: #F68A33;
+      --pink: #DC1351;
+      --purple: #5C2F92;
+      --green: #2CB349;
+      --white: #FFFFFF;
+      --wash: #F3F2EE;
+      --soft-grey: #F5F5F3;
+      --line: #D9DADD;
+      --ink: #171717;
+      --muted: #63666A;
+      --max-width: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-variant-numeric: tabular-nums;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--blue); }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--orange) 70%, transparent);
+      outline-offset: 3px;
+    }
+
+    .site-header {
+      position: relative;
+      overflow: hidden;
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .site-header::after {
+      position: absolute;
+      right: -120px;
+      bottom: -220px;
+      width: 520px;
+      height: 520px;
+      border: 90px solid rgba(255,255,255,.055);
+      border-radius: 50%;
+      content: "";
+      pointer-events: none;
+    }
+
+    .topbar, .hero, main, .footer-inner {
+      width: min(var(--max-width), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 22px 0 18px;
+      border-bottom: 1px solid rgba(255,255,255,.35);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .wordmark {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .stamp {
+      color: rgba(255,255,255,.82);
+      font-size: .88rem;
+      text-align: right;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 58px 0 48px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--orange);
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 920px;
+      margin-bottom: 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.35rem, 5vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.03;
+      letter-spacing: -.035em;
+      overflow-wrap: break-word;
+    }
+
+    .hero-deck {
+      max-width: 820px;
+      margin-bottom: 34px;
+      color: rgba(255,255,255,.88);
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      line-height: 1.55;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-width: 860px;
+      border-top: 1px solid rgba(255,255,255,.35);
+    }
+
+    .hero-stat {
+      padding: 20px 24px 2px 0;
+    }
+
+    .hero-stat + .hero-stat {
+      padding-left: 24px;
+      border-left: 1px solid rgba(255,255,255,.35);
+    }
+
+    .hero-stat-label {
+      display: block;
+      margin-bottom: 5px;
+      color: rgba(255,255,255,.72);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .hero-stat-value {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+    }
+
+    .accent-rule {
+      height: 4px;
+      background: var(--orange);
+    }
+
+    main { padding: 42px 0 72px; }
+
+    .section-block {
+      margin-bottom: 28px;
+      padding: 34px 36px;
+      background: var(--white);
+      border-top: 4px solid var(--blue);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 28px;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 7px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 3vw, 2.3rem);
+      font-weight: 400;
+      letter-spacing: -.02em;
+    }
+
+    .section-heading p {
+      max-width: 710px;
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .vintage-control {
+      display: grid;
+      flex: 0 0 auto;
+      gap: 6px;
+      min-width: 190px;
+      color: var(--grey);
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .vintage-control select {
+      width: 100%;
+      padding: 9px 34px 9px 11px;
+      background: var(--white);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      font: inherit;
+      font-size: .88rem;
+      font-weight: 600;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+
+    .current-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.7fr) minmax(230px, 1fr);
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .current-grid > *, .methodology > * { min-width: 0; }
+
+    .plot-shell {
+      position: relative;
+      min-width: 0;
+      padding: 16px 12px 6px;
+      background: var(--soft-grey);
+      border: 1px solid var(--line);
+    }
+
+    #prescription-plot {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-height: 245px;
+    }
+
+    .plot-tooltip {
+      position: absolute;
+      z-index: 5;
+      max-width: 240px;
+      padding: 9px 11px;
+      background: var(--black);
+      color: var(--white);
+      font-size: .82rem;
+      line-height: 1.4;
+      pointer-events: none;
+      transform: translate(-50%, calc(-100% - 12px));
+    }
+
+    .plot-tooltip[hidden] { display: none; }
+
+    .plot-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 22px;
+      margin-top: 11px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .legend-item { display: inline-flex; align-items: center; gap: 7px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+    .legend-dot.ngdp { background: var(--orange); }
+    .legend-dot.hlw { background: var(--white); border: 2px solid var(--grey); transform: rotate(45deg); border-radius: 0; }
+    .legend-band { width: 22px; height: 10px; background: color-mix(in srgb, var(--green) 20%, var(--white)); border: 1px solid var(--green); }
+
+    .current-context {
+      display: grid;
+      align-content: start;
+      gap: 24px;
+      padding: 24px;
+      background: var(--wash);
+      border-left: 5px solid var(--orange);
+    }
+
+    .context-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--grey);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .context-value {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.25rem;
+    }
+
+    .context-subtext {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.4;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px 24px;
+      margin-bottom: 18px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-label {
+      margin-right: 5px;
+      color: var(--grey);
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .control-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      background: var(--white);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      cursor: pointer;
+      font: inherit;
+      font-size: .84rem;
+    }
+
+    .control-button:hover { border-color: var(--grey); }
+    .control-button[aria-pressed="true"] { border-color: var(--black); box-shadow: inset 0 -2px 0 var(--black); }
+    .range-button[aria-pressed="true"] { background: var(--black); color: var(--white); }
+
+    .export-controls { margin-left: auto; }
+    .share-status { min-width: 76px; color: var(--green); font-size: .82rem; font-weight: 600; }
+
+    .series-swatch { width: 18px; height: 3px; background: currentColor; }
+    .series-swatch.ffr { color: var(--black); height: 4px; }
+    .series-swatch.taylor { color: var(--blue); }
+    .series-swatch.modified { color: var(--purple); }
+    .series-swatch.ngdp-growth { color: var(--orange); }
+    .series-swatch.ngdp-level { color: var(--green); }
+
+    .chart-wrap { position: relative; height: 455px; }
+
+    .history-detail {
+      min-height: 22px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .table-responsive { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    thead th {
+      padding-top: 8px;
+      color: var(--grey);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    tbody th { font-weight: 600; }
+    td.numeric, th.numeric { text-align: right; white-space: nowrap; }
+    tbody tr:hover { background: color-mix(in srgb, var(--blue) 4%, var(--white)); }
+
+    .family-marker {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .family-marker.ngdp { background: var(--orange); }
+
+    .family-marker.hlw {
+      width: 9px;
+      height: 9px;
+      background: var(--white);
+      border: 2px solid var(--blue);
+      border-radius: 0;
+      transform: rotate(45deg);
+    }
+
+    .family-marker.ngdp.hlw {
+      background: var(--white);
+      border-color: var(--orange);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 3px 7px;
+      color: var(--pink);
+      border: 1px solid color-mix(in srgb, var(--pink) 45%, var(--white));
+      font-size: .76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .change-value {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      min-width: 74px;
+      font-weight: 700;
+    }
+
+    .change-value.up { color: var(--pink); }
+    .change-value.down { color: #176B32; }
+    .change-value.unchanged { color: var(--grey); }
+
+    .change-symbol { font-size: .72rem; }
+
+    .decomposition { margin-top: 32px; padding-top: 26px; border-top: 1px solid var(--line); }
+    .decomposition-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 20px; }
+    .decomposition-heading h3 { margin-bottom: 7px; font-family: Georgia, "Times New Roman", serif; font-size: 1.65rem; font-weight: 400; }
+    .decomposition-heading p { max-width: 710px; margin-bottom: 0; color: var(--muted); line-height: 1.5; }
+    .decomposition-rule { display: grid; flex: 0 0 265px; gap: 6px; color: var(--grey); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .decomposition-rule select { width: 100%; min-height: 40px; padding: 8px 34px 8px 10px; background: var(--white); color: var(--ink); border: 1px solid var(--line); border-radius: 2px; font: inherit; font-size: .84rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
+    .decomposition-summary { margin-bottom: 18px; color: var(--ink); font-weight: 600; }
+    .contribution-chart { display: grid; gap: 10px; }
+    .contribution-row { display: grid; grid-template-columns: minmax(155px, 210px) minmax(220px, 1fr) 78px; align-items: center; gap: 14px; }
+    .contribution-label { color: var(--muted); font-size: .88rem; }
+    .contribution-track { position: relative; height: 24px; background: linear-gradient(to right, transparent calc(50% - .5px), var(--line) calc(50% - .5px), var(--line) calc(50% + .5px), transparent calc(50% + .5px)); }
+    .contribution-bar { position: absolute; top: 3px; height: 18px; min-width: 2px; background: var(--blue); }
+    .contribution-bar.negative { background: var(--orange); }
+    .contribution-value { text-align: right; font-size: .88rem; font-weight: 700; white-space: nowrap; }
+    .contribution-legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0 0 224px; color: var(--muted); font-size: .8rem; }
+    .contribution-legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .contribution-key { width: 16px; height: 8px; background: var(--blue); }
+    .contribution-key.negative { background: var(--orange); }
+    .decomposition-empty { padding: 18px 0; color: var(--muted); }
+
+    .methodology-drawer {
+      margin-top: 26px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .methodology-drawer summary {
+      padding: 16px 2px;
+      color: var(--blue);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .methodology-drawer[open] summary { border-bottom: 1px solid var(--line); }
+
+    .methodology-content { padding: 24px 2px 28px; }
+
+    .methodology-intro {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+
+    .methodology-content h3 {
+      margin-bottom: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+    }
+
+    .methodology-content p, .methodology-content ul {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .methodology-content ul { margin: 0; padding-left: 20px; }
+
+    .equation-table code {
+      color: var(--ink);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .82rem;
+      white-space: normal;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .methodology {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 48px;
+    }
+
+    .methodology h2, .methodology h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+    }
+
+    .methodology p, .source-list {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .source-list { margin: 0; padding-left: 20px; }
+
+    .report-list {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 2px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .report-list a {
+      font-weight: 700;
+      text-underline-offset: 3px;
+    }
+
+    .report-checked {
+      margin-left: 6px;
+      color: var(--grey);
+      font-size: .78rem;
+      white-space: nowrap;
+    }
+
+    .download-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding-bottom: 2px;
+      color: var(--blue);
+      border-bottom: 2px solid var(--orange);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    footer {
+      padding: 26px 0;
+      background: var(--black);
+      color: rgba(255,255,255,.72);
+      font-size: .82rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    @media (max-width: 880px) {
+      .section-block { padding: 28px 24px; }
+      .current-grid, .methodology { grid-template-columns: 1fr; }
+      .current-context { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .section-heading { align-items: start; flex-direction: column; }
+      .chart-wrap { height: 390px; }
+      .methodology-intro { grid-template-columns: 1fr; }
+      .decomposition-heading { align-items: start; flex-direction: column; }
+      .decomposition-rule { width: min(100%, 360px); flex-basis: auto; }
+    }
+
+    @media (max-width: 640px) {
+      .topbar, .hero, main, .footer-inner { width: calc(100% - 28px); max-width: var(--max-width); }
+      .topbar, .footer-inner { align-items: start; flex-direction: column; }
+      .stamp { text-align: left; }
+      .hero { padding: 42px 0 36px; }
+      h1 { font-size: 2.2rem; line-height: 1.08; }
+      .hero-deck { font-size: 1rem; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .hero-stat + .hero-stat { padding-left: 0; border-left: 0; }
+      .hero-stat { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.3); }
+      .section-block { padding: 24px 18px; }
+      .section-heading p { overflow-wrap: break-word; }
+      .current-context { grid-template-columns: 1fr; }
+      .controls { align-items: flex-start; flex-direction: column; }
+      .export-controls { margin-left: 0; }
+      .vintage-control { width: 100%; }
+      .chart-wrap { height: 340px; }
+      .contribution-row { grid-template-columns: 1fr 68px; gap: 6px 10px; }
+      .contribution-label { grid-column: 1 / -1; }
+      .contribution-legend { margin-left: 0; }
+      th, td { padding: 10px 9px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="topbar">
+      <div class="brand"><span class="wordmark">AIER</span></div>
+      <div class="stamp" id="stamp">Loading current data…</div>
+    </div>
+    <div class="hero">
+      <p class="eyebrow">Monetary Rules Dashboard</p>
+      <h1 id="headline">Current monetary-rule prescriptions</h1>
+      <p class="hero-deck" id="hero-deck">Loading the latest rule estimates and policy-rate comparison.</p>
+      <div class="hero-stats" aria-label="Current summary">
+        <div class="hero-stat"><span class="hero-stat-label">Prescription range</span><span class="hero-stat-value" id="range">—</span></div>
+        <div class="hero-stat"><span class="hero-stat-label">Median prescription</span><span class="hero-stat-value" id="median">—</span></div>
+        <div class="hero-stat"><span class="hero-stat-label">Current effective federal funds rate</span><span class="hero-stat-value" id="ffr">—</span></div>
+      </div>
+    </div>
+    <div class="accent-rule" aria-hidden="true"></div>
+  </header>
+
+  <main>
+    <section class="section-block" aria-labelledby="current-heading">
+      <div class="section-heading">
+        <div><h2 id="current-heading">Where the rules stand now</h2><p>Each point is one policy-rate prescription. The shaded band marks the current federal funds target range.</p></div>
+        <label class="vintage-control" id="vintage-control" hidden>Rule-data vintage
+          <select id="vintage-selector" aria-describedby="vintage-description"></select>
+          <span class="sr-only" id="vintage-description">Choose a rule-data vintage to view its prescriptions and changes from the preceding vintage.</span>
+        </label>
+      </div>
+      <div class="current-grid">
+        <div>
+          <div class="plot-shell">
+            <svg id="prescription-plot" viewBox="0 0 900 250" role="img" aria-label="Current monetary-rule prescriptions compared with the effective federal funds rate and target range"></svg>
+            <div class="plot-tooltip" id="plot-tooltip" hidden></div>
+          </div>
+          <div class="plot-legend" aria-label="Prescription chart legend">
+            <span class="legend-item"><span class="legend-dot"></span>Taylor rules</span>
+            <span class="legend-item"><span class="legend-dot ngdp"></span>NGDP rules</span>
+            <span class="legend-item"><span class="legend-band"></span>Target range</span>
+          </div>
+        </div>
+        <aside class="current-context" aria-label="Policy context">
+          <div><span class="context-label">Target range</span><span class="context-value" id="target-range">—</span><span class="context-subtext">Current FOMC target for the federal funds rate.</span></div>
+          <div><span class="context-label">Median gap over effective federal funds rate</span><span class="context-value" id="median-gap">—</span><span class="context-subtext">Median rule prescription minus the effective federal funds rate.</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section-block" aria-labelledby="history-heading">
+      <div class="section-heading">
+        <div><h2 id="history-heading">The historical policy signal</h2><p>Compare representative rule paths with the effective federal funds rate. Use the controls to isolate a series or shorten the time window.</p></div>
+      </div>
+      <div class="controls">
+        <div class="control-group" id="series-controls"><span class="control-label">Series</span></div>
+        <div class="control-group" id="range-controls" aria-label="Historical time range">
+          <span class="control-label">Period</span>
+          <button class="control-button range-button" type="button" data-years="1" aria-pressed="false">1Y</button>
+          <button class="control-button range-button" type="button" data-years="5" aria-pressed="false">5Y</button>
+          <button class="control-button range-button" type="button" data-years="10" aria-pressed="false">10Y</button>
+          <button class="control-button range-button" type="button" data-years="all" aria-pressed="true">All</button>
+        </div>
+        <div class="control-group export-controls" aria-label="Export historical chart">
+          <span class="control-label">Export</span>
+          <button class="control-button" id="export-png" type="button">PNG</button>
+          <button class="control-button" id="export-svg" type="button">SVG</button>
+        </div>
+        <div class="control-group" aria-label="Share configured dashboard view">
+          <span class="control-label">Share</span>
+          <button class="control-button" id="copy-link" type="button">Copy link</button>
+          <span class="share-status" id="share-status" aria-live="polite"></span>
+        </div>
+      </div>
+      <div class="chart-wrap"><canvas id="history" role="img" aria-label="Historical monetary-rule prescriptions and effective federal funds rate"></canvas></div>
+      <div class="history-detail" id="history-detail" aria-live="polite">Move across the chart to inspect a historical vintage.</div>
+    </section>
+
+    <section class="section-block" aria-labelledby="table-heading">
+      <div class="section-heading">
+        <div><h2 id="table-heading">All current prescriptions</h2><p id="table-description">The gap measures percentage points above the current effective federal funds rate. Values are shown to two decimal places.</p></div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead><tr><th>Family</th><th>Specification</th><th>r* measure</th><th class="numeric">Prescription</th><th class="numeric" id="change-column-heading">Change From Last FOMC</th><th class="numeric">Gap vs. effective FFR</th><th>Status</th></tr></thead>
+          <tbody id="rules-body"></tbody>
+        </table>
+      </div>
+      <div class="decomposition" aria-labelledby="decomposition-heading">
+        <div class="decomposition-heading">
+          <div>
+            <h3 id="decomposition-heading">What changed?</h3>
+            <p>Decompose the selected rule&rsquo;s change into the contribution from each input. Contributions sum to the total change from the prior rule-data vintage.</p>
+          </div>
+          <label class="decomposition-rule">Rule
+            <select id="decomposition-rule" aria-describedby="decomposition-summary"></select>
+          </label>
+        </div>
+        <div class="decomposition-summary" id="decomposition-summary" aria-live="polite"></div>
+        <div class="contribution-chart" id="contribution-chart" role="img" aria-labelledby="decomposition-heading decomposition-summary"></div>
+        <div class="contribution-legend" aria-label="Contribution direction">
+          <span><span class="contribution-key" aria-hidden="true"></span>Raises the prescription</span>
+          <span><span class="contribution-key negative" aria-hidden="true"></span>Lowers the prescription</span>
+        </div>
+      </div>
+      <details class="methodology-drawer" id="rule-methodology">
+        <summary>Rule methodology, equations, and data vintages</summary>
+        <div class="methodology-content">
+          <div class="methodology-intro">
+            <div>
+              <h3>Inputs</h3>
+              <ul>
+                <li><strong>i<sub>t-1</sub></strong>: lagged effective federal funds rate.</li>
+                <li><strong>r*</strong>: neutral real rate, using either the SEP longer-run measure or the Holston-Laubach-Williams estimate.</li>
+                <li><strong>&pi;</strong> and <strong>&pi;*</strong>: PCE inflation and its target; <strong>&pi;<sup>e</sup></strong> is the SPF forecast.</li>
+                <li><strong>u gap</strong>: the workbook unemployment-gap measure.</li>
+                <li><strong>g<sub>N</sub></strong> and <strong>g*</strong>: nominal GDP growth and its target; <strong>N gap</strong> is the nominal-spending gap.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Source-vintage notes</h3>
+              <p id="source-vintage-notes">Loading source vintages&hellip;</p>
+              <p>SEP-based rows use the FOMC&rsquo;s longer-run real-rate measure. HLW rows substitute the New York Fed&rsquo;s Holston-Laubach-Williams neutral-rate estimate. Historical values reflect the information associated with each dashboard rule-data vintage.</p>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="equation-table">
+              <thead><tr><th>Rule</th><th>r* measure</th><th>Equation</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Original Taylor</th><td>SEP</td><td><code>i = r*<sub>SEP</sub> + &pi;* + 1.5(&pi; &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Original Taylor</th><td>HLW</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi; &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Forward-looking Taylor</th><td>SEP</td><td><code>i = r*<sub>SEP</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Forward-looking Taylor</th><td>HLW</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Smoothed Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, SEP)</code></td></tr>
+                <tr><th scope="row">Smoothed Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, HLW)</code></td></tr>
+                <tr><th scope="row">Smoothed and forward-looking Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, SEP)</code></td></tr>
+                <tr><th scope="row">Smoothed and forward-looking Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, HLW)</code></td></tr>
+                <tr><th scope="row">NGDP growth</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
+                <tr><th scope="row">NGDP growth</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
+                <tr><th scope="row">NGDP level</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + N gap]</code></td></tr>
+                <tr><th scope="row">NGDP level</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + N gap]</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="section-block methodology" id="methodology" aria-labelledby="methodology-heading">
+      <div>
+        <h2 id="methodology-heading">How to read the dashboard</h2>
+        <p>The monetary rules translate inflation, labor-market conditions, nominal spending, the neutral real rate, and prior policy settings into federal funds rate prescriptions. They are benchmarks for evaluating policy—not mechanical instructions or predictions.</p>
+        <h3>Related reports</h3>
+        <ul class="report-list" id="report-links"></ul>
+        <a class="download-link" href="data/monetary-rules-dashboard-data.xlsx" download>Download dashboard data (XLSX)</a>
+      </div>
+      <div>
+        <h3>Primary data sources</h3>
+        <ul class="source-list">
+          <li><a href="https://www.atlantafed.org/research-and-data/data/taylor-rule">Federal Reserve Bank of Atlanta</a> Taylor Rule Utility</li>
+          <li><a href="https://www.newyorkfed.org/markets/reference-rates/effr">Federal Reserve Bank of New York</a> Effective FFR</li>
+          <li><a href="https://www.bea.gov/data/gdp/gross-domestic-product">Bureau of Economic Analysis</a> Nominal GDP</li>
+          <li><a id="neutrality-report-source">Monetary Neutrality Report</a> Nominal-spending gap</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner"><span>American Institute for Economic Research</span><span id="footer-vintage">Monetary-rules data</span></div>
+  </footer>
+
+  <script>
+    const pct = value => `${Number(value).toFixed(2)}%`;
+    const gap = value => `${value >= 0 ? '+' : ''}${Number(value).toFixed(2)} pp`;
+    const basisPoints = value => `${value > 0 ? '+' : ''}${Math.round(value * 100)} bp`;
+    const COLORS = { black:'#000000', blue:'#00609C', grey:'#797D82', orange:'#F68A33', pink:'#DC1351', purple:'#5C2F92', green:'#2CB349' };
+    const SERIES = {
+      effr: { label:'Effective FFR', color:COLORS.black, width:3.4, dash:[], swatch:'ffr' },
+      taylor: { label:'Taylor', color:COLORS.blue, width:2.2, dash:[8,4], swatch:'taylor' },
+      modified_taylor: { label:'Modified Taylor', color:COLORS.purple, width:2.2, dash:[2,3], swatch:'modified' },
+      ngdp_growth: { label:'NGDP growth', color:COLORS.orange, width:2.2, dash:[10,4], swatch:'ngdp-growth' },
+      ngdp_level: { label:'NGDP level', color:COLORS.green, width:2.2, dash:[5,3], swatch:'ngdp-level' }
+    };
+    const SHARE_PERIODS = new Set(['1', '5', '10', 'all']);
+    const readSharedView = () => {
+      const parameters = new URLSearchParams(window.location.search);
+      const period = SHARE_PERIODS.has(parameters.get('period')) ? parameters.get('period') : 'all';
+      const vintage = /^\d{4}-\d{2}-\d{2}$/.test(parameters.get('vintage') || '') ? parameters.get('vintage') : null;
+      const seriesParameter = parameters.get('series');
+      const validSeries = seriesParameter === null
+        ? []
+        : [...new Set(seriesParameter.split(',').filter(key => Object.hasOwn(SERIES, key)))];
+      const requestedSeries = seriesParameter === null
+        ? null
+        : seriesParameter === '' || validSeries.length ? validSeries : null;
+      return {
+        vintage,
+        period,
+        series:requestedSeries,
+        hasParameters:['vintage', 'period', 'series'].some(key => parameters.has(key))
+      };
+    };
+    const writeSharedView = view => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('vintage', view.vintage);
+      url.searchParams.set('period', view.period);
+      url.searchParams.set('series', view.series.join(','));
+      window.history.replaceState({ monetaryRulesView:true }, '', url);
+      return url.href;
+    };
+    const requestedSharedView = readSharedView();
+    const RULES = [
+      { family:'Taylor', spec:'Original', source:'SEP', key:'1a' },
+      { family:'Taylor', spec:'Original', source:'HLW', key:'1b' },
+      { family:'Taylor', spec:'Forward-looking', source:'SEP', key:'2a' },
+      { family:'Taylor', spec:'Forward-looking', source:'HLW', key:'2b' },
+      { family:'Taylor', spec:'Smoothed', source:'SEP', key:'3a' },
+      { family:'Taylor', spec:'Smoothed', source:'HLW', key:'3b' },
+      { family:'Taylor', spec:'Smoothed and Forward-looking', source:'SEP', key:'4a' },
+      { family:'Taylor', spec:'Smoothed and Forward-looking', source:'HLW', key:'4b' },
+      { family:'NGDP', spec:'Growth', source:'SEP', key:'ngdp1' },
+      { family:'NGDP', spec:'Growth', source:'HLW', key:'ngdp2' },
+      { family:'NGDP', spec:'Level', source:'SEP', key:'ngdp3' },
+      { family:'NGDP', spec:'Level', source:'HLW', key:'ngdp4' }
+    ];
+    const CONTRIBUTION_LABELS = {
+      lagged_ffr:'Lagged effective FFR', inflation_target:'Inflation target',
+      r_star_sep:'SEP r*', r_star_hlw:'HLW r*', pce:'PCE inflation',
+      pce_spf:'Expected PCE inflation', unemp_gap:'Unemployment gap',
+      ngdp_target:'NGDP growth target', ngdp:'Nominal GDP growth',
+      nominal_gap:'Nominal-spending gap'
+    };
+    const RULE_COMPONENTS = {
+      '1a':[['taylor','r_star_sep',1],['taylor','pce',1.5],['taylor','inflation_target',-.5],['taylor','unemp_gap',.5]],
+      '1b':[['taylor','r_star_hlw',1],['taylor','pce',1.5],['taylor','inflation_target',-.5],['taylor','unemp_gap',.5]],
+      '2a':[['taylor','r_star_sep',1],['taylor','pce_spf',1.5],['taylor','inflation_target',-.5],['taylor','unemp_gap',.5]],
+      '2b':[['taylor','r_star_hlw',1],['taylor','pce_spf',1.5],['taylor','inflation_target',-.5],['taylor','unemp_gap',.5]],
+      '3a':[['taylor','lagged_ffr',.5],['taylor','r_star_sep',.5],['taylor','pce',.75],['taylor','inflation_target',-.25],['taylor','unemp_gap',.25]],
+      '3b':[['taylor','lagged_ffr',.5],['taylor','r_star_hlw',.5],['taylor','pce',.75],['taylor','inflation_target',-.25],['taylor','unemp_gap',.25]],
+      '4a':[['taylor','lagged_ffr',.5],['taylor','r_star_sep',.5],['taylor','pce_spf',.75],['taylor','inflation_target',-.25],['taylor','unemp_gap',.25]],
+      '4b':[['taylor','lagged_ffr',.5],['taylor','r_star_hlw',.5],['taylor','pce_spf',.75],['taylor','inflation_target',-.25],['taylor','unemp_gap',.25]],
+      ngdp1:[['ngdp','lagged_ffr',.5],['ngdp','r_star_sep',.5],['ngdp','ngdp',.5],['ngdp','ngdp_target',-.5]],
+      ngdp2:[['ngdp','lagged_ffr',.5],['ngdp','r_star_hlw',.5],['ngdp','ngdp',.5],['ngdp','ngdp_target',-.5]],
+      ngdp3:[['ngdp','lagged_ffr',.5],['ngdp','r_star_sep',.5],['ngdp','nominal_gap',.5]],
+      ngdp4:[['ngdp','lagged_ffr',.5],['ngdp','r_star_hlw',.5],['ngdp','nominal_gap',.5]]
+    };
+    const ruleLabel = rule => rule.family === 'NGDP' ? `NGDP ${rule.spec.toLowerCase()}` : `${rule.spec} Taylor`;
+
+    const svgNode = (name, attributes = {}) => {
+      const node = document.createElementNS('http://www.w3.org/2000/svg', name);
+      Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+      return node;
+    };
+
+    function renderPrescriptionPlot(data) {
+      const svg = document.getElementById('prescription-plot');
+      const tooltip = document.getElementById('plot-tooltip');
+      const shell = svg.parentElement;
+      const [targetLow, targetHigh] = data.target_range;
+      const values = RULES.map(rule => data.rules[rule.key]);
+      const domainMin = Math.floor((Math.min(...values, targetLow, data.effr) - .2) * 4) / 4;
+      const domainMax = Math.ceil((Math.max(...values, targetHigh, data.effr) + .2) * 4) / 4;
+      const left = 62, right = 872, top = 34, axisY = 196;
+      const x = value => left + (value - domainMin) * (right - left) / (domainMax - domainMin);
+      svg.replaceChildren();
+
+      const title = svgNode('title');
+      title.textContent = 'Current monetary-rule prescriptions compared with the effective federal funds rate and target range';
+      svg.appendChild(title);
+      svg.appendChild(svgNode('rect', { x:x(targetLow), y:top, width:Math.max(4, x(targetHigh)-x(targetLow)), height:axisY-top, fill:COLORS.green, opacity:'.14' }));
+
+      const addMarker = (value, color, label, dash = '') => {
+        const line = svgNode('line', { x1:x(value), x2:x(value), y1:top-7, y2:axisY+7, stroke:color, 'stroke-width':'2' });
+        if (dash) line.setAttribute('stroke-dasharray', dash);
+        svg.appendChild(line);
+        const text = svgNode('text', { x:x(value), y:22, fill:color, 'text-anchor':'middle', 'font-size':'12', 'font-weight':'700' });
+        text.textContent = label;
+        svg.appendChild(text);
+      };
+
+      addMarker(data.effr, COLORS.black, `Effective FFR ${pct(data.effr)}`);
+      addMarker(data.median, COLORS.pink, `Median ${pct(data.median)}`, '5 4');
+
+      const sortedRules = [...RULES].sort((a,b) => data.rules[a.key] - data.rules[b.key]);
+      const lanes = [64, 94, 124, 154];
+      sortedRules.forEach((rule, index) => {
+        const value = data.rules[rule.key];
+        const cx = x(value), cy = lanes[index % lanes.length];
+        const familyColor = rule.family === 'Taylor' ? COLORS.blue : COLORS.orange;
+        let mark;
+        if (rule.source === 'SEP') {
+          mark = svgNode('circle', { cx, cy, r:'8', fill:familyColor, stroke:'#FFFFFF', 'stroke-width':'2', tabindex:'0' });
+        } else {
+          mark = svgNode('rect', { x:cx-6.5, y:cy-6.5, width:'13', height:'13', fill:'#FFFFFF', stroke:familyColor, 'stroke-width':'3', transform:`rotate(45 ${cx} ${cy})`, tabindex:'0' });
+        }
+        mark.setAttribute('role', 'img');
+        mark.setAttribute('aria-label', `${rule.spec} ${rule.family} rule, ${rule.source} r-star: ${pct(value)}`);
+        const showTooltip = () => {
+          const svgRect = svg.getBoundingClientRect();
+          tooltip.textContent = `${rule.spec} ${rule.family} · ${rule.source} r* · ${pct(value)} · ${gap(value-data.effr)} vs. effective FFR`;
+          tooltip.hidden = false;
+          tooltip.style.left = `${cx / 900 * svgRect.width}px`;
+          tooltip.style.top = `${cy / 250 * svgRect.height}px`;
+        };
+        mark.addEventListener('mouseenter', showTooltip);
+        mark.addEventListener('focus', showTooltip);
+        mark.addEventListener('mouseleave', () => { tooltip.hidden = true; });
+        mark.addEventListener('blur', () => { tooltip.hidden = true; });
+        svg.appendChild(mark);
+      });
+
+      svg.appendChild(svgNode('line', { x1:left, x2:right, y1:axisY, y2:axisY, stroke:COLORS.grey, 'stroke-width':'1' }));
+      const tickStart = Math.ceil(domainMin * 2) / 2;
+      for (let tick=tickStart; tick<=domainMax+.001; tick+=.5) {
+        svg.appendChild(svgNode('line', { x1:x(tick), x2:x(tick), y1:axisY, y2:axisY+6, stroke:COLORS.grey, 'stroke-width':'1' }));
+        const label = svgNode('text', { x:x(tick), y:220, fill:COLORS.grey, 'text-anchor':'middle', 'font-size':'12' });
+        label.textContent = `${tick.toFixed(1)}%`;
+        svg.appendChild(label);
+      }
+      const axisLabel = svgNode('text', { x:(left+right)/2, y:243, fill:COLORS.grey, 'text-anchor':'middle', 'font-size':'12' });
+      axisLabel.textContent = 'Federal funds rate prescription';
+      svg.appendChild(axisLabel);
+    }
+
+    function renderTable(data, previous = null, reportComparison = null) {
+      const [targetLow, targetHigh] = data.target_range;
+      const comparisonRules = reportComparison?.rules || previous?.rules || null;
+      const isReportComparison = Boolean(reportComparison?.rules);
+      const reportDate = reportComparison?.report?.published
+        ? new Date(`${reportComparison.report.published}T12:00:00`).toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' })
+        : null;
+      document.getElementById('change-column-heading').textContent = isReportComparison
+        ? 'Change From Last FOMC'
+        : 'Change from prior rule-data vintage';
+      document.getElementById('table-description').textContent = isReportComparison
+        ? `Changes compare with the Monetary Rules Report published ${reportDate}. The gap measures percentage points above the current effective federal funds rate.`
+        : 'Changes compare with the preceding rule-data vintage. The gap measures percentage points above the selected effective federal funds rate.';
+      document.getElementById('rules-body').innerHTML = RULES.map(rule => {
+        const value = data.rules[rule.key];
+        const status = value > targetHigh ? 'Above range' : value < targetLow ? 'Below range' : 'Within range';
+        const markerClasses = ['family-marker', rule.family === 'NGDP' ? 'ngdp' : '', rule.source === 'HLW' ? 'hlw' : ''].filter(Boolean).join(' ');
+        let change = '<span class="change-value unchanged" aria-label="No preceding data vintage available">&mdash;</span>';
+        if (comparisonRules && Number.isFinite(comparisonRules[rule.key])) {
+          const delta = value - comparisonRules[rule.key];
+          const direction = Math.abs(delta) < .005 ? 'unchanged' : delta > 0 ? 'up' : 'down';
+          const symbol = direction === 'up' ? '&#9650;' : direction === 'down' ? '&#9660;' : '&#8212;';
+          const accessible = direction === 'up' ? 'Increased' : direction === 'down' ? 'Decreased' : 'Unchanged';
+          const basisLabel = isReportComparison ? 'the last published Monetary Rules Report' : 'the prior data vintage';
+          change = `<span class="change-value ${direction}" aria-label="${accessible} ${Math.abs(Math.round(delta * 100))} basis points from ${basisLabel}"><span class="change-symbol" aria-hidden="true">${symbol}</span>${basisPoints(delta)}</span>`;
+        }
+        return `<tr><td><span class="${markerClasses}"></span>${rule.family}</td><th scope="row">${rule.spec}</th><td>${rule.source}</td><td class="numeric">${pct(value)}</td><td class="numeric">${change}</td><td class="numeric">${gap(value-data.effr)}</td><td><span class="status">${status}</span></td></tr>`;
+      }).join('');
+    }
+
+    function renderChangeDecomposition(snapshot, previous = null) {
+      const selector = document.getElementById('decomposition-rule');
+      const chart = document.getElementById('contribution-chart');
+      const summary = document.getElementById('decomposition-summary');
+      const rule = RULES.find(item => item.key === selector.value) || RULES[0];
+      if (!previous?.rules || !snapshot.change_from_previous) {
+        summary.textContent = `${ruleLabel(rule)} (${rule.source} r*): no prior rule-data vintage is available.`;
+        chart.className = 'contribution-chart decomposition-empty';
+        chart.textContent = 'A change decomposition begins with the second available vintage.';
+        chart.setAttribute('aria-label', summary.textContent);
+        return;
+      }
+
+      const stored = snapshot.change_contributions?.[rule.key];
+      const contributions = stored && Object.keys(stored).length ? stored : Object.fromEntries(
+        RULE_COMPONENTS[rule.key].map(([family, input, coefficient]) => [
+          input,
+          coefficient * (snapshot.inputs[family][input] - previous.inputs[family][input])
+        ])
+      );
+      const entries = RULE_COMPONENTS[rule.key].map(([, input]) => ({ input, value:Number(contributions[input] || 0) }));
+      const total = snapshot.rules[rule.key] - previous.rules[rule.key];
+      const maxAbsolute = Math.max(...entries.map(item => Math.abs(item.value)), .01);
+      const formatContribution = value => {
+        const valueInBasisPoints = value * 100;
+        const decimals = Math.abs(valueInBasisPoints) < 1 && valueInBasisPoints !== 0 ? 1 : 0;
+        return `${valueInBasisPoints > 0 ? '+' : ''}${valueInBasisPoints.toFixed(decimals)} bp`;
+      };
+      summary.textContent = `${ruleLabel(rule)} (${rule.source} r*) moved from ${pct(previous.rules[rule.key])} to ${pct(snapshot.rules[rule.key])}, a ${basisPoints(total)} change.`;
+      chart.className = 'contribution-chart';
+      chart.setAttribute('aria-label', `${summary.textContent} ${entries.map(item => `${CONTRIBUTION_LABELS[item.input]} ${formatContribution(item.value)}`).join('; ')}.`);
+      chart.innerHTML = entries.map(item => {
+        const width = Math.abs(item.value) / maxAbsolute * 48;
+        const left = item.value >= 0 ? 50 : 50 - width;
+        const direction = item.value < 0 ? ' negative' : '';
+        return `<div class="contribution-row"><span class="contribution-label">${CONTRIBUTION_LABELS[item.input]}</span><span class="contribution-track" aria-hidden="true"><span class="contribution-bar${direction}" style="left:${left.toFixed(2)}%;width:${width.toFixed(2)}%"></span></span><span class="contribution-value">${formatContribution(item.value)}</span></div>`;
+      }).join('');
+    }
+
+    function buildHistoryChart(data, initialView, onStateChange) {
+      const keys = Object.keys(SERIES);
+      const initiallyVisible = initialView.series === null ? keys : initialView.series;
+      const controls = document.getElementById('series-controls');
+      keys.forEach(key => {
+        const config = SERIES[key];
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'control-button';
+        button.dataset.key = key;
+        button.setAttribute('aria-pressed', String(initiallyVisible.includes(key)));
+        button.innerHTML = `<span class="series-swatch ${config.swatch}"></span>${config.label}`;
+        controls.appendChild(button);
+      });
+
+      const fullHistory = data.history;
+      let activeYears = initialView.period;
+      let activeRows = fullHistory;
+      let selectedDate = fullHistory.at(-1)?.date || null;
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const formatHistoryTick = dateString => {
+        const [year, month] = dateString.split('-');
+        return activeYears === '1' || activeYears === '5' ? `${monthNames[Number(month)-1]} ${year}` : year;
+      };
+      const lineDatasets = keys.map(key => ({
+        key,
+        label:SERIES[key].label,
+        data:fullHistory.map(row => row[key]),
+        borderColor:SERIES[key].color,
+        backgroundColor:SERIES[key].color,
+        borderWidth:SERIES[key].width,
+        borderDash:SERIES[key].dash,
+        pointRadius:context => context.chart.data.labels[context.dataIndex] === selectedDate ? 4.5 : 0,
+        pointBorderWidth:2,
+        pointBorderColor:SERIES[key].color,
+        pointBackgroundColor:'#FFFFFF',
+        pointHoverRadius:4,
+        tension:.1,
+        hidden:!initiallyVisible.includes(key),
+        order:1
+      }));
+      const datasets = [...lineDatasets];
+
+      const chart = new Chart(document.getElementById('history'), {
+        type:'line',
+        data:{ labels:fullHistory.map(row => row.date), datasets },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          interaction:{ mode:'index', intersect:false },
+          animation:{ duration:260 },
+          plugins:{
+            legend:{ display:false },
+            tooltip:{
+              backgroundColor:COLORS.black,
+              titleFont:{ family:'Segoe UI', size:12 },
+              bodyFont:{ family:'Segoe UI', size:12 },
+              padding:12,
+              filter:item => !item.dataset.tooltipHidden,
+              callbacks:{
+                label:context => `${context.dataset.label}: ${pct(context.parsed.y)}`,
+                afterBody:items => { document.getElementById('history-detail').textContent = `${items[0].label}: ${items.map(item => `${item.dataset.label} ${pct(item.parsed.y)}`).join(' · ')}`; }
+              }
+            }
+          },
+          scales:{
+            x:{ grid:{ display:false }, ticks:{ color:COLORS.grey, maxTicksLimit:9, callback:function(value){ return formatHistoryTick(this.getLabelForValue(value)); } } },
+            y:{ title:{ display:true, text:'Percent', color:COLORS.grey }, ticks:{ color:COLORS.grey, callback:value => `${value}%` }, grid:{ color:'#E3E4E5' } }
+          }
+        }
+      });
+
+      const getState = () => ({
+        period:activeYears,
+        series:keys.filter(key => {
+          const index = chart.data.datasets.findIndex(dataset => dataset.key === key);
+          return chart.isDatasetVisible(index);
+        })
+      });
+      const notifyStateChange = () => onStateChange?.(getState());
+      const setHistoricalRange = (years, notify = true) => {
+        activeYears = years;
+        const lastDate = new Date(fullHistory.at(-1).date);
+        const cutoff = years === 'all' ? null : new Date(lastDate.getFullYear()-Number(years), lastDate.getMonth(), lastDate.getDate());
+        activeRows = cutoff ? fullHistory.filter(row => new Date(row.date) >= cutoff) : fullHistory;
+        chart.data.labels = activeRows.map(row => row.date);
+        chart.data.datasets.forEach(dataset => { dataset.data = activeRows.map(row => row[dataset.key]); });
+        chart.options.scales.x.ticks.maxTicksLimit = years === '1' ? 5 : years === '5' ? (window.innerWidth <= 640 ? 5 : 7) : 9;
+        document.querySelectorAll('.range-button').forEach(item => item.setAttribute('aria-pressed', String(item.dataset.years === years)));
+        if (notify) notifyStateChange();
+      };
+      setHistoricalRange(activeYears, false);
+
+      controls.addEventListener('click', event => {
+        const button = event.target.closest('button[data-key]');
+        if (!button) return;
+        const index = chart.data.datasets.findIndex(dataset => dataset.key === button.dataset.key);
+        const show = !chart.isDatasetVisible(index);
+        chart.setDatasetVisibility(index, show);
+        button.setAttribute('aria-pressed', String(show));
+        chart.update();
+        notifyStateChange();
+      });
+
+      document.getElementById('range-controls').addEventListener('click', event => {
+        const button = event.target.closest('button[data-years]');
+        if (!button) return;
+        const years = button.dataset.years;
+        setHistoricalRange(years, false);
+        chart.update();
+        notifyStateChange();
+      });
+
+      const downloadBlob = (blob, filename) => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      };
+
+      const exportFilename = extension => {
+        const start = activeRows[0]?.date || 'start';
+        const end = activeRows.at(-1)?.date || 'end';
+        return `aier-monetary-rules-history-${start}-to-${end}.${extension}`;
+      };
+
+      document.getElementById('export-png').addEventListener('click', () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 2400;
+        canvas.height = 1350;
+        const exportDatasets = chart.data.datasets.map((dataset, index) => ({
+          ...dataset,
+          data:[...dataset.data],
+          borderWidth:dataset.borderWidth ? dataset.borderWidth * 1.8 : 0,
+          hidden:!chart.isDatasetVisible(index)
+        }));
+        const backgroundPlugin = {
+          id:'publicationBackground',
+          beforeDraw(exportChart) {
+            const context = exportChart.ctx;
+            context.save();
+            context.globalCompositeOperation = 'destination-over';
+            context.fillStyle = '#FFFFFF';
+            context.fillRect(0, 0, exportChart.width, exportChart.height);
+            context.restore();
+          }
+        };
+        const exportChart = new Chart(canvas, {
+          type:'line',
+          data:{ labels:[...chart.data.labels], datasets:exportDatasets },
+          plugins:[backgroundPlugin],
+          options:{
+            responsive:false,
+            animation:false,
+            devicePixelRatio:1,
+            layout:{ padding:{ top:28, right:44, bottom:28, left:30 } },
+            plugins:{
+              title:{ display:true, text:'AIER Historical Monetary-Policy Signal', align:'start', color:COLORS.black, font:{ family:'Georgia', size:36, weight:'normal' }, padding:{ bottom:18 } },
+              legend:{ display:true, position:'bottom', labels:{ color:COLORS.black, font:{ family:'Segoe UI', size:22 }, padding:28, usePointStyle:true, filter:item => !exportDatasets[item.datasetIndex].legendHidden } },
+              tooltip:{ enabled:false }
+            },
+            scales:{
+              x:{ grid:{ display:false }, ticks:{ color:COLORS.grey, maxTicksLimit:9, font:{ size:20 }, callback:function(value){ return formatHistoryTick(this.getLabelForValue(value)); } } },
+              y:{ title:{ display:true, text:'Percent', color:COLORS.grey, font:{ size:22 } }, ticks:{ color:COLORS.grey, font:{ size:20 }, callback:value => `${value}%` }, grid:{ color:'#E3E4E5' } }
+            }
+          }
+        });
+        canvas.toBlob(blob => {
+          if (blob) downloadBlob(blob, exportFilename('png'));
+          exportChart.destroy();
+        }, 'image/png');
+      });
+
+      document.getElementById('export-svg').addEventListener('click', () => {
+        const width = 1600, height = 900;
+        const margin = { left:120, right:55, top:105, bottom:155 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const labels = [...chart.data.labels];
+        const selectedIndex = labels.indexOf(selectedDate);
+        const visibleLines = chart.data.datasets.filter((dataset, index) => SERIES[dataset.key] && chart.isDatasetVisible(index));
+        const numericValues = visibleLines.flatMap(dataset => dataset.data).map(Number).filter(Number.isFinite);
+        let yMin = Math.floor(Math.min(...numericValues, 0) * 2) / 2;
+        let yMax = Math.ceil(Math.max(...numericValues, 1) * 2) / 2;
+        if (yMin === yMax) yMax = yMin + 1;
+        const x = index => margin.left + (labels.length <= 1 ? plotWidth / 2 : index * plotWidth / (labels.length - 1));
+        const y = value => margin.top + (yMax - value) * plotHeight / (yMax - yMin);
+        const escapeXml = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[character]));
+        const linePath = values => {
+          let started = false;
+          return values.map((value, index) => {
+            if (!Number.isFinite(Number(value))) { started = false; return ''; }
+            const command = started ? 'L' : 'M';
+            started = true;
+            return `${command}${x(index).toFixed(1)},${y(Number(value)).toFixed(1)}`;
+          }).join(' ');
+        };
+        const yTicks = Array.from({length:7}, (_, index) => yMin + index * (yMax-yMin)/6);
+        const tickCount = Math.min(9, labels.length);
+        const xTickIndexes = [...new Set(Array.from({length:tickCount}, (_, index) => Math.round(index * (labels.length-1) / Math.max(1, tickCount-1))))];
+        const legendEntries = visibleLines.map(dataset => ({ label:dataset.label, color:dataset.borderColor, dash:(dataset.borderDash || []).join(',') }));
+        const svg = [
+          `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">`,
+          '<title id="title">AIER Historical Monetary-Policy Signal</title>',
+          `<desc id="desc">Historical monetary-rule prescriptions and the effective federal funds rate from ${escapeXml(labels[0] || '')} through ${escapeXml(labels.at(-1) || '')}.</desc>`,
+          '<rect width="100%" height="100%" fill="#FFFFFF"/>',
+          '<text x="120" y="54" fill="#000000" font-family="Georgia, Times New Roman, serif" font-size="38">AIER Historical Monetary-Policy Signal</text>',
+          `<text x="120" y="82" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(labels[0] || '')} to ${escapeXml(labels.at(-1) || '')}</text>`,
+          ...yTicks.map(value => `<line x1="${margin.left}" x2="${width-margin.right}" y1="${y(value).toFixed(1)}" y2="${y(value).toFixed(1)}" stroke="#E3E4E5" stroke-width="1"/><text x="${margin.left-18}" y="${(y(value)+6).toFixed(1)}" text-anchor="end" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="17">${value.toFixed(1)}%</text>`),
+          `<line x1="${margin.left}" x2="${width-margin.right}" y1="${margin.top+plotHeight}" y2="${margin.top+plotHeight}" stroke="#797D82" stroke-width="1"/>`,
+          ...xTickIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${margin.top+plotHeight+34}" text-anchor="middle" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="17">${escapeXml(formatHistoryTick(labels[index]))}</text>`),
+          ...visibleLines.map(dataset => `<path d="${linePath(dataset.data)}" fill="none" stroke="${dataset.borderColor}" stroke-width="${Math.max(3, dataset.borderWidth)}"${dataset.borderDash?.length ? ` stroke-dasharray="${dataset.borderDash.join(' ')}"` : ''} stroke-linejoin="round" stroke-linecap="round"/>`),
+          ...visibleLines.map(dataset => selectedIndex >= 0 && Number.isFinite(Number(dataset.data[selectedIndex])) ? `<circle cx="${x(selectedIndex).toFixed(1)}" cy="${y(Number(dataset.data[selectedIndex])).toFixed(1)}" r="6" fill="#FFFFFF" stroke="${dataset.borderColor}" stroke-width="3"/>` : ''),
+          '<text x="34" y="430" transform="rotate(-90 34 430)" text-anchor="middle" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="18">Percent</text>',
+          ...legendEntries.map((entry, index) => { const legendX = margin.left + (index % 3) * 390; const legendY = 828 + Math.floor(index / 3) * 34; return `<line x1="${legendX}" x2="${legendX+42}" y1="${legendY-5}" y2="${legendY-5}" stroke="${entry.color}" stroke-width="4"${entry.dash ? ` stroke-dasharray="${entry.dash}"` : ''}/><text x="${legendX+54}" y="${legendY}" fill="#171717" font-family="Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(entry.label)}</text>`; }),
+          '</svg>'
+        ].join('');
+        downloadBlob(new Blob([svg], {type:'image/svg+xml;charset=utf-8'}), exportFilename('svg'));
+      });
+      const selectVintage = (date, notify = true) => {
+        selectedDate = String(date).slice(0,10);
+        if (!activeRows.some(row => row.date === selectedDate)) setHistoricalRange('all', false);
+        const selected = fullHistory.find(row => row.date === selectedDate);
+        if (selected) {
+          const details = Object.keys(SERIES).map(key => `${SERIES[key].label} ${pct(selected[key])}`).join(' \u00b7 ');
+          document.getElementById('history-detail').textContent = `Selected ${selectedDate}: ${details}`;
+        }
+        chart.update();
+        if (notify) notifyStateChange();
+      };
+      return { chart, selectVintage, getState };
+    }
+
+    fetch('data/results.json')
+      .then(response => { if (!response.ok) throw new Error('dashboard data unavailable'); return response.json(); })
+      .then(data => {
+        data.target_range = data.target_range || [3.5, 3.75];
+        const values = Object.values(data.rules);
+        const [targetLow, targetHigh] = data.target_range;
+        const aboveCount = values.filter(value => value > targetHigh).length;
+        const allAbove = aboveCount === values.length;
+        document.getElementById('headline').textContent = allAbove ? `All ${values.length} rules prescribe a rate above the current target range` : `${aboveCount} of ${values.length} rules prescribe a rate above the current target range`;
+        document.getElementById('hero-deck').textContent = `The latest prescriptions span ${pct(data.range[0])} to ${pct(data.range[1])}, with a median of ${pct(data.median)}, compared with a current effective federal funds rate of ${pct(data.effr)}.`;
+        document.getElementById('range').textContent = `${pct(data.range[0])}–${pct(data.range[1])}`;
+        document.getElementById('median').textContent = pct(data.median);
+        document.getElementById('ffr').textContent = pct(data.effr);
+        document.getElementById('target-range').textContent = `${pct(targetLow)}–${pct(targetHigh)}`;
+        document.getElementById('median-gap').textContent = gap(data.median-data.effr);
+        const reportLinks = document.getElementById('report-links');
+        const reports = data.reports || {};
+        const reportDefinitions = [
+          ['monetary_rules', 'Latest Monetary Rules Report']
+        ];
+        reportLinks.innerHTML = reportDefinitions
+          .filter(([key]) => reports[key]?.url)
+          .map(([key, fallbackLabel]) => {
+            const report = reports[key];
+            const checked = report.checked_at ? `<span class="report-checked">Checked ${report.checked_at}</span>` : '';
+            return `<li><a href="${report.url}" target="_blank" rel="noopener noreferrer">${report.label || fallbackLabel}</a>${checked}</li>`;
+          }).join('');
+        const neutralityReport = reports.monetary_neutrality;
+        const neutralitySource = document.getElementById('neutrality-report-source');
+        if (neutralityReport?.url) {
+          neutralitySource.href = neutralityReport.url;
+          neutralitySource.target = '_blank';
+          neutralitySource.rel = 'noopener noreferrer';
+        }
+        const generated = data.generated_at ? new Date(data.generated_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }) : 'current run';
+        const vintage = data.taylor_vintage.slice(0,10);
+        document.getElementById('stamp').textContent = `Data vintage ${vintage} · Updated ${generated}`;
+        document.getElementById('footer-vintage').textContent = `Data vintage ${vintage}`;
+        const normalizeSnapshot = snapshot => {
+          const rules = snapshot.rules || data.rules;
+          const values = RULES.map(rule => Number(rules[rule.key])).filter(Number.isFinite).sort((a,b) => a-b);
+          const midpoint = Math.floor(values.length / 2);
+          const computedMedian = values.length % 2 ? values[midpoint] : (values[midpoint-1] + values[midpoint]) / 2;
+          return {
+            ...snapshot,
+            date:snapshot.date || snapshot.taylor_vintage || data.taylor_vintage,
+            effr:Number(snapshot.effr ?? data.effr),
+            target_range:snapshot.target_range || data.target_range,
+            rules,
+            range:snapshot.range || [values[0], values.at(-1)],
+            median:snapshot.median ?? computedMedian
+          };
+        };
+        const fallbackSnapshot = normalizeSnapshot(data);
+        let snapshots = Array.isArray(data.snapshots) && data.snapshots.length ? data.snapshots.map(normalizeSnapshot) : [fallbackSnapshot];
+        snapshots = snapshots.filter(snapshot => snapshot.date && snapshot.rules).sort((a,b) => new Date(a.date) - new Date(b.date));
+        if (!snapshots.length) snapshots = [fallbackSnapshot];
+        const latestSnapshot = snapshots.at(-1);
+        const requestedSnapshotIndex = snapshots.findIndex(snapshot => String(snapshot.date).slice(0,10) === requestedSharedView.vintage);
+        const initialSnapshotIndex = requestedSnapshotIndex >= 0 ? requestedSnapshotIndex : snapshots.length - 1;
+        const initialSnapshot = snapshots[initialSnapshotIndex];
+        let currentVintageDate = String(initialSnapshot.date).slice(0,10);
+        let historyView;
+        const syncSharedView = () => writeSharedView({ vintage:currentVintageDate, ...historyView.getState() });
+        historyView = buildHistoryChart(data, requestedSharedView, syncSharedView);
+        const formatVintageDate = date => new Date(`${String(date).slice(0,10)}T12:00:00`).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+        const latestTaylorVintage = String(data.taylor_vintage || latestSnapshot.date).slice(0,10);
+        const latestNgdpVintage = String(data.ngdp_vintage || latestSnapshot.date).slice(0,10);
+        const decompositionSelector = document.getElementById('decomposition-rule');
+        decompositionSelector.innerHTML = RULES.map(rule => `<option value="${rule.key}">${ruleLabel(rule)} \u00b7 ${rule.source} r*</option>`).join('');
+        let activeDecompositionSnapshot = latestSnapshot;
+        let activeDecompositionPrevious = snapshots.at(-2) || null;
+        decompositionSelector.addEventListener('change', () => renderChangeDecomposition(activeDecompositionSnapshot, activeDecompositionPrevious));
+
+        const renderSourceVintageNotes = (snapshot, isLatest) => {
+          const snapshotVintage = String(snapshot.date).slice(0,10);
+          const taylorVintage = isLatest ? latestTaylorVintage : snapshotVintage;
+          const ngdpVintage = isLatest ? latestNgdpVintage : snapshotVintage;
+          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${taylorVintage} workbook vintage; NGDP-rule inputs use the ${ngdpVintage} workbook vintage. The target range and effective FFR correspond to the selected rule-data vintage.`;
+        };
+
+        const renderCurrentVintage = (snapshot, previous, isLatest, syncUrl = true) => {
+          currentVintageDate = String(snapshot.date).slice(0,10);
+          activeDecompositionSnapshot = snapshot;
+          activeDecompositionPrevious = previous;
+          const currentValues = RULES.map(rule => snapshot.rules[rule.key]).filter(Number.isFinite);
+          const [snapshotTargetLow, snapshotTargetHigh] = snapshot.target_range;
+          const snapshotAboveCount = currentValues.filter(value => value > snapshotTargetHigh).length;
+          const snapshotAllAbove = snapshotAboveCount === currentValues.length;
+          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${currentValues.length} rules prescribe a rate above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rules prescribe a rate above the ${isLatest ? 'current' : 'selected'} target range`;
+          document.getElementById('hero-deck').textContent = `${isLatest ? 'The latest' : `At the ${formatVintageDate(snapshot.date)} rule-data vintage,`} prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with an effective federal funds rate of ${pct(snapshot.effr)}.`;
+          document.getElementById('range').textContent = `${pct(snapshot.range[0])}\u2013${pct(snapshot.range[1])}`;
+          document.getElementById('median').textContent = pct(snapshot.median);
+          document.getElementById('ffr').textContent = pct(snapshot.effr);
+          document.getElementById('target-range').textContent = `${pct(snapshotTargetLow)}\u2013${pct(snapshotTargetHigh)}`;
+          document.getElementById('median-gap').textContent = gap(snapshot.median-snapshot.effr);
+          document.getElementById('stamp').textContent = `Data vintage ${String(snapshot.date).slice(0,10)} \u00b7 Updated ${generated}`;
+          document.getElementById('footer-vintage').textContent = `${isLatest ? 'Data' : 'Selected data'} vintage ${String(snapshot.date).slice(0,10)}`;
+          renderSourceVintageNotes(snapshot, isLatest);
+          historyView.selectVintage(snapshot.date, syncUrl);
+          renderPrescriptionPlot(snapshot);
+          renderTable(snapshot, previous, isLatest ? data.published_report_comparison : null);
+          renderChangeDecomposition(snapshot, previous);
+        };
+
+        const vintageControl = document.getElementById('vintage-control');
+        const vintageSelector = document.getElementById('vintage-selector');
+        if (snapshots.length > 1) {
+          vintageControl.hidden = false;
+          vintageSelector.innerHTML = snapshots.map((snapshot, index) => `<option value="${index}"${index === initialSnapshotIndex ? ' selected' : ''}>${formatVintageDate(snapshot.date)}${index === snapshots.length-1 ? ' (latest)' : ''}</option>`).join('');
+          vintageSelector.addEventListener('change', () => {
+            const index = Number(vintageSelector.value);
+            renderCurrentVintage(snapshots[index], snapshots[index-1] || null, index === snapshots.length-1);
+          });
+        }
+
+        const copyLink = document.getElementById('copy-link');
+        const shareStatus = document.getElementById('share-status');
+        copyLink.addEventListener('click', async () => {
+          const url = syncSharedView();
+          try {
+            if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+            await Promise.race([
+              navigator.clipboard.writeText(url),
+              new Promise((_, reject) => window.setTimeout(() => reject(new Error('Clipboard API timed out')), 800))
+            ]);
+          } catch {
+            const fallback = document.createElement('textarea');
+            fallback.value = url;
+            fallback.setAttribute('readonly', '');
+            fallback.style.position = 'absolute';
+            fallback.style.left = '-9999px';
+            document.body.appendChild(fallback);
+            fallback.select();
+            document.execCommand('copy');
+            fallback.remove();
+          }
+          shareStatus.textContent = 'Link copied';
+          window.setTimeout(() => { shareStatus.textContent = ''; }, 2400);
+        });
+
+        renderCurrentVintage(initialSnapshot, snapshots[initialSnapshotIndex-1] || null, initialSnapshotIndex === snapshots.length-1, false);
+        if (requestedSharedView.hasParameters) syncSharedView();
+      })
+      .catch(error => {
+        document.getElementById('stamp').textContent = `Dashboard error: ${error.message}`;
+        document.getElementById('hero-deck').textContent = 'The dashboard data could not be loaded. Please refresh or check the local data file.';
+      });
+  </script>
+</body>
+</html>
