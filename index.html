@@ -1294,7 +1294,7 @@
         const [targetLow, targetHigh] = data.target_range;
         const aboveCount = values.filter(value => value > targetHigh).length;
         const allAbove = aboveCount === values.length;
-        document.getElementById('headline').textContent = allAbove ? `All ${values.length} rules prescribe a rate above the current target range` : `${aboveCount} of ${values.length} rules prescribe a rate above the current target range`;
+        document.getElementById('headline').textContent = allAbove ? `All ${values.length} rules prescribe a policy rate above the current target range` : `${aboveCount} of ${values.length} rules prescribe a policy rate above the current target range`;
         document.getElementById('hero-deck').textContent = `The latest prescriptions span ${pct(data.range[0])} to ${pct(data.range[1])}, with a median of ${pct(data.median)}, compared with a current effective federal funds rate of ${pct(data.effr)}.`;
         document.getElementById('range').textContent = `${pct(data.range[0])}–${pct(data.range[1])}`;
         document.getElementById('median').textContent = pct(data.median);
@@ -1378,7 +1378,7 @@
           const [snapshotTargetLow, snapshotTargetHigh] = snapshot.target_range;
           const snapshotAboveCount = currentValues.filter(value => value > snapshotTargetHigh).length;
           const snapshotAllAbove = snapshotAboveCount === currentValues.length;
-          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${currentValues.length} rules prescribe a rate above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rules prescribe a rate above the ${isLatest ? 'current' : 'selected'} target range`;
+          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${currentValues.length} rules prescribe a policy rate above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rules prescribe a policy rate above the ${isLatest ? 'current' : 'selected'} target range`;
           document.getElementById('hero-deck').textContent = isLatest
             ? `The latest prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with a current effective federal funds rate of ${pct(snapshot.effr)}.`
             : `At the ${formatQuarter(snapshot.date)} data vintage (${formatObservationDate(snapshot.date)} source row), prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with an effective federal funds rate of ${pct(snapshot.effr)}.`;
