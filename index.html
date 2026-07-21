@@ -96,9 +96,19 @@
     }
 
     .stamp {
+      display: grid;
+      gap: 3px;
+      max-width: 560px;
       color: rgba(255,255,255,.82);
       font-size: .88rem;
       text-align: right;
+    }
+
+    .stamp-primary { font-weight: 700; }
+
+    .stamp-secondary {
+      color: rgba(255,255,255,.68);
+      font-size: .79rem;
     }
 
     .hero {
@@ -639,7 +649,10 @@
   <header class="site-header">
     <div class="topbar">
       <div class="brand"><span class="wordmark">AIER</span></div>
-      <div class="stamp" id="stamp">Loading current data…</div>
+      <div class="stamp" id="stamp">
+        <span class="stamp-primary" id="release-stamp">Loading dashboard release&hellip;</span>
+        <span class="stamp-secondary" id="observation-stamp"></span>
+      </div>
     </div>
     <div class="hero">
       <p class="eyebrow">Monetary Rules Dashboard</p>
@@ -657,10 +670,10 @@
   <main>
     <section class="section-block" aria-labelledby="current-heading">
       <div class="section-heading">
-        <div><h2 id="current-heading">Where the rules stand now</h2><p>Each point is one policy-rate prescription. The shaded band marks the current federal funds target range.</p></div>
-        <label class="vintage-control" id="vintage-control" hidden>Rule-data vintage
+        <div><h2 id="current-heading">Where the rules stand now</h2><p>Each point is one policy-rate prescription. The latest data vintage is identified by its FOMC cycle and update cutoff; earlier vintages retain their quarterly source-workbook dates.</p></div>
+        <label class="vintage-control" id="vintage-control" hidden>Data vintage
           <select id="vintage-selector" aria-describedby="vintage-description"></select>
-          <span class="sr-only" id="vintage-description">Choose a rule-data vintage to view its prescriptions and changes from the preceding vintage.</span>
+          <span class="sr-only" id="vintage-description">Choose a data vintage to view its prescriptions and changes from the preceding available observation.</span>
         </label>
       </div>
       <div class="current-grid">
@@ -707,7 +720,7 @@
         </div>
       </div>
       <div class="chart-wrap"><canvas id="history" role="img" aria-label="Historical monetary-rule prescriptions and effective federal funds rate"></canvas></div>
-      <div class="history-detail" id="history-detail" aria-live="polite">Move across the chart to inspect a historical vintage.</div>
+      <div class="history-detail" id="history-detail" aria-live="polite">Move across the chart to inspect a quarterly observation.</div>
     </section>
 
     <section class="section-block" aria-labelledby="table-heading">
@@ -724,7 +737,7 @@
         <div class="decomposition-heading">
           <div>
             <h3 id="decomposition-heading">What changed?</h3>
-            <p>Decompose the selected rule&rsquo;s change into the contribution from each input. Contributions sum to the total change from the prior rule-data vintage.</p>
+            <p>Decompose the selected rule&rsquo;s change into the contribution from each input. Contributions sum to the total change from the prior quarterly observation.</p>
           </div>
           <label class="decomposition-rule">Rule
             <select id="decomposition-rule" aria-describedby="decomposition-summary"></select>
@@ -738,7 +751,7 @@
         </div>
       </div>
       <details class="methodology-drawer" id="rule-methodology">
-        <summary>Rule methodology, equations, and data vintages</summary>
+        <summary>Rule methodology, equations, and observation dates</summary>
         <div class="methodology-content">
           <div class="methodology-intro">
             <div>
@@ -754,7 +767,7 @@
             <div>
               <h3>Source-vintage notes</h3>
               <p id="source-vintage-notes">Loading source vintages&hellip;</p>
-              <p>SEP-based rows use the FOMC&rsquo;s longer-run real-rate measure. HLW rows substitute the New York Fed&rsquo;s Holston-Laubach-Williams neutral-rate estimate. Historical values reflect the information associated with each dashboard rule-data vintage.</p>
+              <p>SEP-based rows use the FOMC&rsquo;s longer-run real-rate measure. HLW rows substitute the New York Fed&rsquo;s Holston-Laubach-Williams neutral-rate estimate. Historical values are organized by quarterly observation date; immutable dashboard releases preserve the separate as-of versions.</p>
             </div>
           </div>
           <div class="table-responsive">
@@ -767,8 +780,8 @@
                 <tr><th scope="row">Forward-looking Taylor</th><td>HLW</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
                 <tr><th scope="row">Smoothed Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, SEP)</code></td></tr>
                 <tr><th scope="row">Smoothed Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, HLW)</code></td></tr>
-                <tr><th scope="row">Smoothed and forward-looking Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, SEP)</code></td></tr>
-                <tr><th scope="row">Smoothed and forward-looking Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, HLW)</code></td></tr>
+                <tr><th scope="row">Modified Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, SEP)</code></td></tr>
+                <tr><th scope="row">Modified Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, HLW)</code></td></tr>
                 <tr><th scope="row">NGDP growth</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
                 <tr><th scope="row">NGDP growth</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
                 <tr><th scope="row">NGDP level</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + N gap]</code></td></tr>
@@ -851,8 +864,8 @@
       { family:'Taylor', spec:'Forward-looking', source:'HLW', key:'2b' },
       { family:'Taylor', spec:'Smoothed', source:'SEP', key:'3a' },
       { family:'Taylor', spec:'Smoothed', source:'HLW', key:'3b' },
-      { family:'Taylor', spec:'Smoothed and Forward-looking', source:'SEP', key:'4a' },
-      { family:'Taylor', spec:'Smoothed and Forward-looking', source:'HLW', key:'4b' },
+      { family:'Taylor', spec:'Modified', source:'SEP', key:'4a' },
+      { family:'Taylor', spec:'Modified', source:'HLW', key:'4b' },
       { family:'NGDP', spec:'Growth', source:'SEP', key:'ngdp1' },
       { family:'NGDP', spec:'Growth', source:'HLW', key:'ngdp2' },
       { family:'NGDP', spec:'Level', source:'SEP', key:'ngdp3' },
@@ -880,6 +893,15 @@
       ngdp4:[['ngdp','lagged_ffr',.5],['ngdp','r_star_hlw',.5],['ngdp','nominal_gap',.5]]
     };
     const ruleLabel = rule => rule.family === 'NGDP' ? `NGDP ${rule.spec.toLowerCase()}` : `${rule.spec} Taylor`;
+    const dateParts = value => String(value).slice(0,10).split('-').map(Number);
+    const formatQuarter = value => {
+      const [year, month] = dateParts(value);
+      return `${year} Q${Math.floor((month - 1) / 3) + 1}`;
+    };
+    const formatObservationDate = value => new Date(`${String(value).slice(0,10)}T12:00:00`).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    const formatReleaseId = value => /^\d{4}-\d{2}$/.test(String(value))
+      ? new Date(`${value}-01T12:00:00`).toLocaleDateString('en-US', { month:'long', year:'numeric' })
+      : String(value || 'Current');
 
     const svgNode = (name, attributes = {}) => {
       const node = document.createElementNS('http://www.w3.org/2000/svg', name);
@@ -966,10 +988,10 @@
         : null;
       document.getElementById('change-column-heading').textContent = isReportComparison
         ? 'Change From Last FOMC'
-        : 'Change from prior rule-data vintage';
+        : 'Change from prior quarterly observation';
       document.getElementById('table-description').textContent = isReportComparison
         ? `Changes compare with the Monetary Rules Report published ${reportDate}. The gap measures percentage points above the current effective federal funds rate.`
-        : 'Changes compare with the preceding rule-data vintage. The gap measures percentage points above the selected effective federal funds rate.';
+        : 'Changes compare with the preceding quarterly observation. The gap measures percentage points above the selected effective federal funds rate.';
       document.getElementById('rules-body').innerHTML = RULES.map(rule => {
         const value = data.rules[rule.key];
         const status = value > targetHigh ? 'Above range' : value < targetLow ? 'Below range' : 'Within range';
@@ -980,7 +1002,7 @@
           const direction = Math.abs(delta) < .005 ? 'unchanged' : delta > 0 ? 'up' : 'down';
           const symbol = direction === 'up' ? '&#9650;' : direction === 'down' ? '&#9660;' : '&#8212;';
           const accessible = direction === 'up' ? 'Increased' : direction === 'down' ? 'Decreased' : 'Unchanged';
-          const basisLabel = isReportComparison ? 'the last published Monetary Rules Report' : 'the prior data vintage';
+          const basisLabel = isReportComparison ? 'the last published Monetary Rules Report' : 'the prior quarterly observation';
           change = `<span class="change-value ${direction}" aria-label="${accessible} ${Math.abs(Math.round(delta * 100))} basis points from ${basisLabel}"><span class="change-symbol" aria-hidden="true">${symbol}</span>${basisPoints(delta)}</span>`;
         }
         return `<tr><td><span class="${markerClasses}"></span>${rule.family}</td><th scope="row">${rule.spec}</th><td>${rule.source}</td><td class="numeric">${pct(value)}</td><td class="numeric">${change}</td><td class="numeric">${gap(value-data.effr)}</td><td><span class="status">${status}</span></td></tr>`;
@@ -993,9 +1015,9 @@
       const summary = document.getElementById('decomposition-summary');
       const rule = RULES.find(item => item.key === selector.value) || RULES[0];
       if (!previous?.rules || !snapshot.change_from_previous) {
-        summary.textContent = `${ruleLabel(rule)} (${rule.source} r*): no prior rule-data vintage is available.`;
+        summary.textContent = `${ruleLabel(rule)} (${rule.source} r*): no prior quarterly observation is available.`;
         chart.className = 'contribution-chart decomposition-empty';
-        chart.textContent = 'A change decomposition begins with the second available vintage.';
+        chart.textContent = 'A change decomposition begins with the second available quarterly observation.';
         chart.setAttribute('aria-label', summary.textContent);
         return;
       }
@@ -1254,7 +1276,7 @@
         const selected = fullHistory.find(row => row.date === selectedDate);
         if (selected) {
           const details = Object.keys(SERIES).map(key => `${SERIES[key].label} ${pct(selected[key])}`).join(' \u00b7 ');
-          document.getElementById('history-detail').textContent = `Selected ${selectedDate}: ${details}`;
+          document.getElementById('history-detail').textContent = `Selected ${formatQuarter(selectedDate)} quarterly observation (${formatObservationDate(selectedDate)} source row): ${details}`;
         }
         chart.update();
         if (notify) notifyStateChange();
@@ -1262,9 +1284,11 @@
       return { chart, selectVintage, getState };
     }
 
-    fetch('data/results.json')
-      .then(response => { if (!response.ok) throw new Error('dashboard data unavailable'); return response.json(); })
-      .then(data => {
+    Promise.all([
+      fetch('data/results.json').then(response => { if (!response.ok) throw new Error('dashboard data unavailable'); return response.json(); }),
+      fetch('data/archive/manifest.json').then(response => response.ok ? response.json() : null).catch(() => null)
+    ])
+      .then(([data, archiveManifest]) => {
         data.target_range = data.target_range || [3.5, 3.75];
         const values = Object.values(data.rules);
         const [targetLow, targetHigh] = data.target_range;
@@ -1297,9 +1321,13 @@
           neutralitySource.rel = 'noopener noreferrer';
         }
         const generated = data.generated_at ? new Date(data.generated_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }) : 'current run';
-        const vintage = data.taylor_vintage.slice(0,10);
-        document.getElementById('stamp').textContent = `Data vintage ${vintage} · Updated ${generated}`;
-        document.getElementById('footer-vintage').textContent = `Data vintage ${vintage}`;
+        const releases = Array.isArray(archiveManifest?.releases) ? archiveManifest.releases : [];
+        const currentRelease = releases.at(-1) || null;
+        const releaseLabel = currentRelease ? formatReleaseId(currentRelease.release_id) : 'Current';
+        const releaseDetail = currentRelease?.data_cutoff
+          ? `${releaseLabel} dashboard release · Data through ${formatObservationDate(currentRelease.data_cutoff)}`
+          : `${releaseLabel} dashboard release · Updated ${generated}`;
+        document.getElementById('release-stamp').textContent = releaseDetail;
         const normalizeSnapshot = snapshot => {
           const rules = snapshot.rules || data.rules;
           const values = RULES.map(rule => Number(rules[rule.key])).filter(Number.isFinite).sort((a,b) => a-b);
@@ -1327,7 +1355,6 @@
         let historyView;
         const syncSharedView = () => writeSharedView({ vintage:currentVintageDate, ...historyView.getState() });
         historyView = buildHistoryChart(data, requestedSharedView, syncSharedView);
-        const formatVintageDate = date => new Date(`${String(date).slice(0,10)}T12:00:00`).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
         const latestTaylorVintage = String(data.taylor_vintage || latestSnapshot.date).slice(0,10);
         const latestNgdpVintage = String(data.ngdp_vintage || latestSnapshot.date).slice(0,10);
         const decompositionSelector = document.getElementById('decomposition-rule');
@@ -1340,7 +1367,7 @@
           const snapshotVintage = String(snapshot.date).slice(0,10);
           const taylorVintage = isLatest ? latestTaylorVintage : snapshotVintage;
           const ngdpVintage = isLatest ? latestNgdpVintage : snapshotVintage;
-          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${taylorVintage} workbook vintage; NGDP-rule inputs use the ${ngdpVintage} workbook vintage. The target range and effective FFR correspond to the selected rule-data vintage.`;
+          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)}); NGDP-rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). The target range and effective FFR are stored with the selected quarterly observation.`;
         };
 
         const renderCurrentVintage = (snapshot, previous, isLatest, syncUrl = true) => {
@@ -1352,14 +1379,16 @@
           const snapshotAboveCount = currentValues.filter(value => value > snapshotTargetHigh).length;
           const snapshotAllAbove = snapshotAboveCount === currentValues.length;
           document.getElementById('headline').textContent = snapshotAllAbove ? `All ${currentValues.length} rules prescribe a rate above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rules prescribe a rate above the ${isLatest ? 'current' : 'selected'} target range`;
-          document.getElementById('hero-deck').textContent = `${isLatest ? 'The latest' : `At the ${formatVintageDate(snapshot.date)} rule-data vintage,`} prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with an effective federal funds rate of ${pct(snapshot.effr)}.`;
+          document.getElementById('hero-deck').textContent = isLatest
+            ? `The latest prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with a current effective federal funds rate of ${pct(snapshot.effr)}.`
+            : `At the ${formatQuarter(snapshot.date)} data vintage (${formatObservationDate(snapshot.date)} source row), prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with an effective federal funds rate of ${pct(snapshot.effr)}.`;
           document.getElementById('range').textContent = `${pct(snapshot.range[0])}\u2013${pct(snapshot.range[1])}`;
           document.getElementById('median').textContent = pct(snapshot.median);
           document.getElementById('ffr').textContent = pct(snapshot.effr);
           document.getElementById('target-range').textContent = `${pct(snapshotTargetLow)}\u2013${pct(snapshotTargetHigh)}`;
           document.getElementById('median-gap').textContent = gap(snapshot.median-snapshot.effr);
-          document.getElementById('stamp').textContent = `Data vintage ${String(snapshot.date).slice(0,10)} \u00b7 Updated ${generated}`;
-          document.getElementById('footer-vintage').textContent = `${isLatest ? 'Data' : 'Selected data'} vintage ${String(snapshot.date).slice(0,10)}`;
+          document.getElementById('observation-stamp').textContent = `Quarterly observation ${formatQuarter(snapshot.date)} · ${formatObservationDate(snapshot.date)} source row · Built ${generated}`;
+          document.getElementById('footer-vintage').textContent = `${releaseLabel} dashboard release · ${formatQuarter(snapshot.date)} observation`;
           renderSourceVintageNotes(snapshot, isLatest);
           historyView.selectVintage(snapshot.date, syncUrl);
           renderPrescriptionPlot(snapshot);
@@ -1371,7 +1400,13 @@
         const vintageSelector = document.getElementById('vintage-selector');
         if (snapshots.length > 1) {
           vintageControl.hidden = false;
-          vintageSelector.innerHTML = snapshots.map((snapshot, index) => `<option value="${index}"${index === initialSnapshotIndex ? ' selected' : ''}>${formatVintageDate(snapshot.date)}${index === snapshots.length-1 ? ' (latest)' : ''}</option>`).join('');
+          vintageSelector.innerHTML = snapshots.map((snapshot, index) => {
+            const isLatest = index === snapshots.length - 1;
+            const label = isLatest && currentRelease
+              ? `${releaseLabel} FOMC cycle · Updated through ${formatObservationDate(currentRelease.data_cutoff)} (latest)`
+              : `${formatObservationDate(snapshot.date)} · ${formatQuarter(snapshot.date)} source vintage`;
+            return `<option value="${index}"${index === initialSnapshotIndex ? ' selected' : ''}>${label}</option>`;
+          }).join('');
           vintageSelector.addEventListener('change', () => {
             const index = Number(vintageSelector.value);
             renderCurrentVintage(snapshots[index], snapshots[index-1] || null, index === snapshots.length-1);
@@ -1407,7 +1442,8 @@
         if (requestedSharedView.hasParameters) syncSharedView();
       })
       .catch(error => {
-        document.getElementById('stamp').textContent = `Dashboard error: ${error.message}`;
+        document.getElementById('release-stamp').textContent = `Dashboard error: ${error.message}`;
+        document.getElementById('observation-stamp').textContent = '';
         document.getElementById('hero-deck').textContent = 'The dashboard data could not be loaded. Please refresh or check the local data file.';
       });
   </script>
