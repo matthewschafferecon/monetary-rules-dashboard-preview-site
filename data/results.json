@@ -1,6 +1,6 @@
 {
   "workbook": "verified-workbook.xlsx",
-  "generated_at": "2026-07-18T02:16:27.668151+00:00",
+  "generated_at": "2026-07-29T00:16:04.751143+00:00",
   "taylor_vintage": "2026-05-15T00:00:00",
   "ngdp_vintage": "2026-05-15T00:00:00",
   "effr": 3.63,
@@ -11,15 +11,15 @@
   "reports": {
     "monetary_rules": {
       "label": "Latest Monetary Rules Report",
-      "url": "https://fedagenda.substack.com/p/monetary-rules-report-b79",
-      "published": "2026-06-16",
-      "checked_at": "2026-07-17"
+      "url": "https://fedagenda.substack.com/p/monetary-rules-report-31f",
+      "published": "2026-07-28",
+      "checked_at": "2026-07-28"
     },
     "monetary_neutrality": {
       "label": "Latest Monetary Neutrality Report",
       "url": "https://fedagenda.substack.com/p/monetary-neutrality-report-d5a",
       "published": "2026-05-01",
-      "checked_at": "2026-07-17"
+      "checked_at": "2026-07-28"
     }
   },
   "inputs": {
