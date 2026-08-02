@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "release_count": 2,
+  "release_count": 3,
   "releases": [
     {
       "release_id": "2026-07",
@@ -17,6 +17,14 @@
       "effective_ffr_date": "2026-07-27",
       "url": "releases/2026-07-rules-report.json",
       "sha256": "f888e911813213a29eac494510e19d478f17d8ce9a88f3a5b58254c673b6966e"
+    },
+    {
+      "release_id": "2026-07-post-fomc",
+      "data_cutoff": "2026-08-02",
+      "rule_data_vintage": "2026-08-15",
+      "effective_ffr_date": "2026-07-30",
+      "url": "releases/2026-07-post-fomc.json",
+      "sha256": "01a706c9b8c9f90cbe5c625eeeda14833462fac19465f7d9b716e9c583c2eb82"
     }
   ]
 }
