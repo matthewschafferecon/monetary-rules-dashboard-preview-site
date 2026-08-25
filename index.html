@@ -4,22 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="AIER monetary-policy rule prescriptions and historical estimates.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2300609C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia' font-size='40' fill='white'%3EA%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="assets/img/AIER_Logomark_Green.png">
   <title>AIER Monetary Rules Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <style>
+    /* AIER brand fonts (Brand Identity, 2024): Financier for headlines, Figure for UI text */
+    @font-face { font-family: "Financier Display"; src: url("assets/fonts/FinancierDisplay-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Financier Display"; src: url("assets/fonts/FinancierDisplay-Semibold.otf") format("opentype"); font-weight: 600; font-display: swap; }
+    @font-face { font-family: "Financier Text"; src: url("assets/fonts/FinancierText-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Financier Text"; src: url("assets/fonts/FinancierText-Italic.otf") format("opentype"); font-weight: 400; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Figure"; src: url("assets/fonts/Figure-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Figure"; src: url("assets/fonts/Figure-Medium.otf") format("opentype"); font-weight: 500; font-display: swap; }
+    @font-face { font-family: "Figure"; src: url("assets/fonts/Figure-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+
     :root {
+      /* AIER brand palette */
+      --aier-green: #083E00;      /* primary */
+      --aier-gold: #C08000;       /* accent */
+      --aier-gold-bright: #D2A12F;
+      --aier-blue: #3987C4;       /* secondary */
+      --aier-navy: #0E5A8C;       /* legacy navy, tuned for chart legibility */
+      --aier-rust: #D14B2F;       /* highlight */
+      --aier-rust-dark: #923D28;
+      --aier-stone: #BEB9A2;
+      --aier-bone: #F1F0E5;
       --black: #000000;
-      --blue: #00609C;
       --grey: #797D82;
-      --orange: #F68A33;
-      --pink: #DC1351;
-      --purple: #5C2F92;
-      --green: #2CB349;
       --white: #FFFFFF;
-      --wash: #F3F2EE;
-      --soft-grey: #F5F5F3;
-      --line: #D9DADD;
+      --wash: var(--aier-bone);
+      --soft-grey: #F8F7EF;
+      --line: #DCD9CB;
       --ink: #171717;
       --muted: #63666A;
       --max-width: 1240px;
@@ -33,24 +47,24 @@
       margin: 0;
       background: var(--wash);
       color: var(--ink);
-      font-family: "Segoe UI", Arial, sans-serif;
+      font-family: "Figure", "Segoe UI", Arial, sans-serif;
       font-variant-numeric: tabular-nums;
       overflow-x: hidden;
     }
 
-    a { color: var(--blue); }
+    a { color: var(--aier-green); }
 
     button, a { -webkit-tap-highlight-color: transparent; }
 
     button:focus-visible, a:focus-visible {
-      outline: 3px solid color-mix(in srgb, var(--orange) 70%, transparent);
+      outline: 3px solid color-mix(in srgb, var(--aier-gold-bright) 70%, transparent);
       outline-offset: 3px;
     }
 
     .site-header {
       position: relative;
       overflow: hidden;
-      background: var(--blue);
+      background: var(--aier-green);
       color: var(--white);
     }
 
@@ -88,11 +102,10 @@
       gap: 14px;
     }
 
-    .wordmark {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: .04em;
+    .brand-logo {
+      display: block;
+      width: auto;
+      height: 46px;
     }
 
     .stamp {
@@ -119,7 +132,7 @@
 
     .eyebrow {
       margin: 0 0 14px;
-      color: var(--orange);
+      color: var(--aier-gold-bright);
       font-size: .8rem;
       font-weight: 700;
       letter-spacing: .14em;
@@ -131,7 +144,7 @@
     h1 {
       max-width: 920px;
       margin-bottom: 18px;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Financier Display", Georgia, "Times New Roman", serif;
       font-size: clamp(2.35rem, 4.4vw, 4rem);
       font-weight: 400;
       line-height: 1.03;
@@ -174,13 +187,13 @@
     }
 
     .hero-stat-value {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Financier Display", Georgia, "Times New Roman", serif;
       font-size: 2rem;
     }
 
     .accent-rule {
       height: 4px;
-      background: var(--orange);
+      background: var(--aier-gold);
     }
 
     main { padding: 42px 0 72px; }
@@ -189,7 +202,7 @@
       margin-bottom: 28px;
       padding: 34px 36px;
       background: var(--white);
-      border-top: 4px solid var(--blue);
+      border-top: 4px solid var(--aier-green);
     }
 
     .section-heading {
@@ -202,7 +215,7 @@
 
     .section-heading h2 {
       margin-bottom: 7px;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Financier Display", Georgia, "Times New Roman", serif;
       font-size: clamp(1.65rem, 3vw, 2.3rem);
       font-weight: 400;
       letter-spacing: -.02em;
@@ -270,7 +283,7 @@
       z-index: 5;
       max-width: 240px;
       padding: 9px 11px;
-      background: var(--black);
+      background: var(--aier-green);
       color: var(--white);
       font-size: .82rem;
       line-height: 1.4;
@@ -290,10 +303,10 @@
     }
 
     .legend-item { display: inline-flex; align-items: center; gap: 7px; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
-    .legend-dot.ngdp { background: var(--orange); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--aier-blue); }
+    .legend-dot.ngdp { background: var(--aier-gold); }
     .legend-dot.hlw { background: var(--white); border: 2px solid var(--grey); transform: rotate(45deg); border-radius: 0; }
-    .legend-band { width: 22px; height: 10px; background: color-mix(in srgb, var(--green) 20%, var(--white)); border: 1px solid var(--green); }
+    .legend-band { width: 22px; height: 10px; background: color-mix(in srgb, var(--aier-green) 16%, var(--white)); border: 1px solid var(--aier-green); }
 
     .current-context {
       display: grid;
@@ -301,7 +314,7 @@
       gap: 24px;
       padding: 24px;
       background: var(--wash);
-      border-left: 5px solid var(--orange);
+      border-left: 5px solid var(--aier-gold);
     }
 
     .context-label {
@@ -316,7 +329,7 @@
 
     .context-value {
       display: block;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Financier Display", Georgia, "Times New Roman", serif;
       font-size: 2.25rem;
     }
 
@@ -368,18 +381,18 @@
     }
 
     .control-button:hover { border-color: var(--grey); }
-    .control-button[aria-pressed="true"] { border-color: var(--black); box-shadow: inset 0 -2px 0 var(--black); }
-    .range-button[aria-pressed="true"] { background: var(--black); color: var(--white); }
+    .control-button[aria-pressed="true"] { border-color: var(--aier-green); box-shadow: inset 0 -2px 0 var(--aier-green); }
+    .range-button[aria-pressed="true"] { background: var(--aier-green); color: var(--white); }
 
     .export-controls { margin-left: auto; }
-    .share-status { min-width: 76px; color: var(--green); font-size: .82rem; font-weight: 600; }
+    .share-status { min-width: 76px; color: var(--aier-green); font-size: .82rem; font-weight: 600; }
 
     .series-swatch { width: 18px; height: 3px; background: currentColor; }
-    .series-swatch.ffr { color: var(--black); height: 4px; }
-    .series-swatch.taylor { color: var(--blue); }
-    .series-swatch.modified { color: var(--purple); }
-    .series-swatch.ngdp-growth { color: var(--orange); }
-    .series-swatch.ngdp-level { color: var(--green); }
+    .series-swatch.ffr { color: var(--ink); height: 4px; }
+    .series-swatch.taylor { color: var(--aier-blue); }
+    .series-swatch.modified { color: var(--aier-navy); }
+    .series-swatch.ngdp-growth { color: var(--aier-gold); }
+    .series-swatch.ngdp-level { color: var(--aier-rust-dark); }
 
     .chart-wrap { position: relative; height: 455px; }
 
@@ -415,7 +428,7 @@
 
     tbody th { font-weight: 600; }
     td.numeric, th.numeric { text-align: right; white-space: nowrap; }
-    tbody tr:hover { background: color-mix(in srgb, var(--blue) 4%, var(--white)); }
+    tbody tr:hover { background: color-mix(in srgb, var(--aier-green) 5%, var(--white)); }
 
     .family-marker {
       display: inline-block;
@@ -423,30 +436,30 @@
       height: 8px;
       margin-right: 8px;
       border-radius: 50%;
-      background: var(--blue);
+      background: var(--aier-blue);
     }
 
-    .family-marker.ngdp { background: var(--orange); }
+    .family-marker.ngdp { background: var(--aier-gold); }
 
     .family-marker.hlw {
       width: 9px;
       height: 9px;
       background: var(--white);
-      border: 2px solid var(--blue);
+      border: 2px solid var(--aier-blue);
       border-radius: 0;
       transform: rotate(45deg);
     }
 
     .family-marker.ngdp.hlw {
       background: var(--white);
-      border-color: var(--orange);
+      border-color: var(--aier-gold);
     }
 
     .status {
       display: inline-block;
       padding: 3px 7px;
-      color: var(--pink);
-      border: 1px solid color-mix(in srgb, var(--pink) 45%, var(--white));
+      color: var(--aier-rust);
+      border: 1px solid color-mix(in srgb, var(--aier-rust) 45%, var(--white));
       font-size: .76rem;
       font-weight: 700;
       white-space: nowrap;
@@ -461,15 +474,15 @@
       font-weight: 700;
     }
 
-    .change-value.up { color: var(--pink); }
-    .change-value.down { color: #176B32; }
+    .change-value.up { color: var(--aier-rust); }
+    .change-value.down { color: var(--aier-navy); }
     .change-value.unchanged { color: var(--grey); }
 
     .change-symbol { font-size: .72rem; }
 
     .decomposition { margin-top: 32px; padding-top: 26px; border-top: 1px solid var(--line); }
     .decomposition-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 20px; }
-    .decomposition-heading h3 { margin-bottom: 7px; font-family: Georgia, "Times New Roman", serif; font-size: 1.65rem; font-weight: 400; }
+    .decomposition-heading h3 { margin-bottom: 7px; font-family: "Financier Display", Georgia, "Times New Roman", serif; font-size: 1.65rem; font-weight: 400; }
     .decomposition-heading p { max-width: 710px; margin-bottom: 0; color: var(--muted); line-height: 1.5; }
     .decomposition-rule { display: grid; flex: 0 0 265px; gap: 6px; color: var(--grey); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
     .decomposition-rule select { width: 100%; min-height: 40px; padding: 8px 34px 8px 10px; background: var(--white); color: var(--ink); border: 1px solid var(--line); border-radius: 2px; font: inherit; font-size: .84rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
@@ -478,13 +491,13 @@
     .contribution-row { display: grid; grid-template-columns: minmax(155px, 210px) minmax(220px, 1fr) 78px; align-items: center; gap: 14px; }
     .contribution-label { color: var(--muted); font-size: .88rem; }
     .contribution-track { position: relative; height: 24px; background: linear-gradient(to right, transparent calc(50% - .5px), var(--line) calc(50% - .5px), var(--line) calc(50% + .5px), transparent calc(50% + .5px)); }
-    .contribution-bar { position: absolute; top: 3px; height: 18px; min-width: 2px; background: var(--blue); }
-    .contribution-bar.negative { background: var(--orange); }
+    .contribution-bar { position: absolute; top: 3px; height: 18px; min-width: 2px; background: var(--aier-rust); }
+    .contribution-bar.negative { background: var(--aier-blue); }
     .contribution-value { text-align: right; font-size: .88rem; font-weight: 700; white-space: nowrap; }
     .contribution-legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 16px 0 0 224px; color: var(--muted); font-size: .8rem; }
     .contribution-legend span { display: inline-flex; align-items: center; gap: 7px; }
-    .contribution-key { width: 16px; height: 8px; background: var(--blue); }
-    .contribution-key.negative { background: var(--orange); }
+    .contribution-key { width: 16px; height: 8px; background: var(--aier-rust); }
+    .contribution-key.negative { background: var(--aier-blue); }
     .decomposition-empty { padding: 18px 0; color: var(--muted); }
 
     .methodology-drawer {
@@ -495,7 +508,7 @@
 
     .methodology-drawer summary {
       padding: 16px 2px;
-      color: var(--blue);
+      color: var(--aier-green);
       cursor: pointer;
       font-weight: 700;
     }
@@ -513,7 +526,7 @@
 
     .methodology-content h3 {
       margin-bottom: 8px;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Financier Display", Georgia, "Times New Roman", serif;
       font-size: 1.2rem;
       font-weight: 400;
     }
@@ -551,7 +564,7 @@
     }
 
     .methodology h2, .methodology h3 {
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Financier Display", Georgia, "Times New Roman", serif;
       font-weight: 400;
     }
 
@@ -586,15 +599,15 @@
       display: inline-block;
       margin-top: 10px;
       padding-bottom: 2px;
-      color: var(--blue);
-      border-bottom: 2px solid var(--orange);
+      color: var(--aier-green);
+      border-bottom: 2px solid var(--aier-gold);
       font-weight: 700;
       text-decoration: none;
     }
 
     footer {
       padding: 26px 0;
-      background: var(--black);
+      background: var(--aier-green);
       color: rgba(255,255,255,.72);
       font-size: .82rem;
     }
@@ -648,7 +661,7 @@
 <body>
   <header class="site-header">
     <div class="topbar">
-      <div class="brand"><span class="wordmark">AIER</span></div>
+      <div class="brand"><a href="https://www.aier.org" aria-label="American Institute for Economic Research"><img class="brand-logo" src="assets/img/AIER_Lockup_White.png" alt="AIER — American Institute for Economic Research"></a></div>
       <div class="stamp" id="stamp">
         <span class="stamp-primary" id="release-stamp">Loading dashboard release&hellip;</span>
         <span class="stamp-secondary" id="observation-stamp"></span>
@@ -821,7 +834,12 @@
     const pct = value => `${Number(value).toFixed(2)}%`;
     const gap = value => `${value >= 0 ? '+' : ''}${Number(value).toFixed(2)} pp`;
     const basisPoints = value => `${value > 0 ? '+' : ''}${Math.round(value * 100)} bp`;
-    const COLORS = { black:'#000000', blue:'#00609C', grey:'#797D82', orange:'#F68A33', pink:'#DC1351', purple:'#5C2F92', green:'#2CB349' };
+    // AIER brand chart palette (validated for CVD + contrast on white; navy tuned from legacy #084462)
+    const COLORS = { black:'#171717', blue:'#3987C4', grey:'#797D82', orange:'#C08000', pink:'#D14B2F', purple:'#0E5A8C', green:'#923D28', brand:'#083E00' };
+    if (window.Chart) {
+      Chart.defaults.font.family = "'Figure', 'Segoe UI', Arial, sans-serif";
+      Chart.defaults.color = COLORS.grey;
+    }
     const SERIES = {
       effr: { label:'Effective FFR', color:COLORS.black, width:3.4, dash:[], swatch:'ffr' },
       taylor: { label:'Taylor', color:COLORS.blue, width:2.2, dash:[8,4], swatch:'taylor' },
@@ -924,7 +942,7 @@
       const title = svgNode('title');
       title.textContent = 'Current monetary-rule prescriptions compared with the effective federal funds rate and target range';
       svg.appendChild(title);
-      svg.appendChild(svgNode('rect', { x:x(targetLow), y:top, width:Math.max(4, x(targetHigh)-x(targetLow)), height:axisY-top, fill:COLORS.green, opacity:'.14' }));
+      svg.appendChild(svgNode('rect', { x:x(targetLow), y:top, width:Math.max(4, x(targetHigh)-x(targetLow)), height:axisY-top, fill:COLORS.brand, opacity:'.12' }));
 
       const addMarker = (value, color, label, dash = '') => {
         const line = svgNode('line', { x1:x(value), x2:x(value), y1:top-7, y2:axisY+7, stroke:color, 'stroke-width':'2' });
@@ -1102,9 +1120,9 @@
           plugins:{
             legend:{ display:false },
             tooltip:{
-              backgroundColor:COLORS.black,
-              titleFont:{ family:'Segoe UI', size:12 },
-              bodyFont:{ family:'Segoe UI', size:12 },
+              backgroundColor:COLORS.brand,
+              titleFont:{ family:'Figure, Segoe UI, sans-serif', size:12 },
+              bodyFont:{ family:'Figure, Segoe UI, sans-serif', size:12 },
               padding:12,
               filter:item => !item.dataset.tooltipHidden,
               callbacks:{
@@ -1115,10 +1133,11 @@
           },
           scales:{
             x:{ grid:{ display:false }, ticks:{ color:COLORS.grey, maxTicksLimit:9, callback:function(value){ return formatHistoryTick(this.getLabelForValue(value)); } } },
-            y:{ title:{ display:true, text:'Percent', color:COLORS.grey }, ticks:{ color:COLORS.grey, callback:value => `${value}%` }, grid:{ color:'#E3E4E5' } }
+            y:{ title:{ display:true, text:'Percent', color:COLORS.grey }, ticks:{ color:COLORS.grey, callback:value => `${value}%` }, grid:{ color:'#E7E5DA' } }
           }
         }
       });
+      if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => chart.update('none')); }
 
       const getState = () => ({
         period:activeYears,
@@ -1208,13 +1227,13 @@
             devicePixelRatio:1,
             layout:{ padding:{ top:28, right:44, bottom:28, left:30 } },
             plugins:{
-              title:{ display:true, text:'AIER Historical Monetary-Policy Signal', align:'start', color:COLORS.black, font:{ family:'Georgia', size:36, weight:'normal' }, padding:{ bottom:18 } },
-              legend:{ display:true, position:'bottom', labels:{ color:COLORS.black, font:{ family:'Segoe UI', size:22 }, padding:28, usePointStyle:true, filter:item => !exportDatasets[item.datasetIndex].legendHidden } },
+              title:{ display:true, text:'AIER Historical Monetary-Policy Signal', align:'start', color:COLORS.brand, font:{ family:'Financier Display, Georgia, serif', size:36, weight:'normal' }, padding:{ bottom:18 } },
+              legend:{ display:true, position:'bottom', labels:{ color:COLORS.black, font:{ family:'Figure, Segoe UI, sans-serif', size:22 }, padding:28, usePointStyle:true, filter:item => !exportDatasets[item.datasetIndex].legendHidden } },
               tooltip:{ enabled:false }
             },
             scales:{
               x:{ grid:{ display:false }, ticks:{ color:COLORS.grey, maxTicksLimit:9, font:{ size:20 }, callback:function(value){ return formatHistoryTick(this.getLabelForValue(value)); } } },
-              y:{ title:{ display:true, text:'Percent', color:COLORS.grey, font:{ size:22 } }, ticks:{ color:COLORS.grey, font:{ size:20 }, callback:value => `${value}%` }, grid:{ color:'#E3E4E5' } }
+              y:{ title:{ display:true, text:'Percent', color:COLORS.grey, font:{ size:22 } }, ticks:{ color:COLORS.grey, font:{ size:20 }, callback:value => `${value}%` }, grid:{ color:'#E7E5DA' } }
             }
           }
         });
@@ -1257,15 +1276,15 @@
           '<title id="title">AIER Historical Monetary-Policy Signal</title>',
           `<desc id="desc">Historical monetary-rule prescriptions and the effective federal funds rate from ${escapeXml(labels[0] || '')} through ${escapeXml(labels.at(-1) || '')}.</desc>`,
           '<rect width="100%" height="100%" fill="#FFFFFF"/>',
-          '<text x="120" y="54" fill="#000000" font-family="Georgia, Times New Roman, serif" font-size="38">AIER Historical Monetary-Policy Signal</text>',
-          `<text x="120" y="82" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(labels[0] || '')} to ${escapeXml(labels.at(-1) || '')}</text>`,
-          ...yTicks.map(value => `<line x1="${margin.left}" x2="${width-margin.right}" y1="${y(value).toFixed(1)}" y2="${y(value).toFixed(1)}" stroke="#E3E4E5" stroke-width="1"/><text x="${margin.left-18}" y="${(y(value)+6).toFixed(1)}" text-anchor="end" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="17">${value.toFixed(1)}%</text>`),
+          '<text x="120" y="54" fill="#083E00" font-family="Financier Display, Georgia, Times New Roman, serif" font-size="38">AIER Historical Monetary-Policy Signal</text>',
+          `<text x="120" y="82" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(labels[0] || '')} to ${escapeXml(labels.at(-1) || '')}</text>`,
+          ...yTicks.map(value => `<line x1="${margin.left}" x2="${width-margin.right}" y1="${y(value).toFixed(1)}" y2="${y(value).toFixed(1)}" stroke="#E7E5DA" stroke-width="1"/><text x="${margin.left-18}" y="${(y(value)+6).toFixed(1)}" text-anchor="end" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="17">${value.toFixed(1)}%</text>`),
           `<line x1="${margin.left}" x2="${width-margin.right}" y1="${margin.top+plotHeight}" y2="${margin.top+plotHeight}" stroke="#797D82" stroke-width="1"/>`,
-          ...xTickIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${margin.top+plotHeight+34}" text-anchor="middle" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="17">${escapeXml(formatHistoryTick(labels[index]))}</text>`),
+          ...xTickIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${margin.top+plotHeight+34}" text-anchor="middle" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="17">${escapeXml(formatHistoryTick(labels[index]))}</text>`),
           ...visibleLines.map(dataset => `<path d="${linePath(dataset.data)}" fill="none" stroke="${dataset.borderColor}" stroke-width="${Math.max(3, dataset.borderWidth)}"${dataset.borderDash?.length ? ` stroke-dasharray="${dataset.borderDash.join(' ')}"` : ''} stroke-linejoin="round" stroke-linecap="round"/>`),
           ...visibleLines.map(dataset => selectedIndex >= 0 && Number.isFinite(Number(dataset.data[selectedIndex])) ? `<circle cx="${x(selectedIndex).toFixed(1)}" cy="${y(Number(dataset.data[selectedIndex])).toFixed(1)}" r="6" fill="#FFFFFF" stroke="${dataset.borderColor}" stroke-width="3"/>` : ''),
-          '<text x="34" y="430" transform="rotate(-90 34 430)" text-anchor="middle" fill="#797D82" font-family="Segoe UI, Arial, sans-serif" font-size="18">Percent</text>',
-          ...legendEntries.map((entry, index) => { const legendX = margin.left + (index % 3) * 390; const legendY = 828 + Math.floor(index / 3) * 34; return `<line x1="${legendX}" x2="${legendX+42}" y1="${legendY-5}" y2="${legendY-5}" stroke="${entry.color}" stroke-width="4"${entry.dash ? ` stroke-dasharray="${entry.dash}"` : ''}/><text x="${legendX+54}" y="${legendY}" fill="#171717" font-family="Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(entry.label)}</text>`; }),
+          '<text x="34" y="430" transform="rotate(-90 34 430)" text-anchor="middle" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18">Percent</text>',
+          ...legendEntries.map((entry, index) => { const legendX = margin.left + (index % 3) * 390; const legendY = 828 + Math.floor(index / 3) * 34; return `<line x1="${legendX}" x2="${legendX+42}" y1="${legendY-5}" y2="${legendY-5}" stroke="${entry.color}" stroke-width="4"${entry.dash ? ` stroke-dasharray="${entry.dash}"` : ''}/><text x="${legendX+54}" y="${legendY}" fill="#171717" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(entry.label)}</text>`; }),
           '</svg>'
         ].join('');
         downloadBlob(new Blob([svg], {type:'image/svg+xml;charset=utf-8'}), exportFilename('svg'));

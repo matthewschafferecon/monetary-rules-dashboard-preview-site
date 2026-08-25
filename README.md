@@ -7,7 +7,7 @@ Double-click `view-dashboard.cmd`. It starts a local-only web server, opens the 
 Keep the launcher window open while viewing the dashboard. Press Enter in that window to stop the server.
 
 The dashboard opens on the latest available rule-data vintage. Use the vintage
-selector to inspect any of the 58 reconstructed quarterly observations, compare
+selector to inspect any of the 59 reconstructed quarterly observations, compare
 each prescription with the prior vintage, and review its historical target range.
 The selected vintage is marked on the historical chart, and the What changed?
 panel decomposes each rule movement into its input contributions.
