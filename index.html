@@ -884,7 +884,7 @@
               <h3>Dates and neutral-rate alternatives</h3>
               <p id="technical-metadata">Loading release and build details&hellip;</p>
               <p id="source-vintage-notes">Loading source details&hellip;</p>
-              <p>Default rows use the Federal Reserve&rsquo;s own longer-run neutral-rate estimate from the Summary of Economic Projections. Alternate rows substitute the New York Fed model estimate. Historical values are organized by quarterly observation date; immutable releases preserve their separate as-of versions.</p>
+              <p>Featured rows use the Federal Reserve&rsquo;s own longer-run neutral-rate estimate from the Summary of Economic Projections. Alternate rows substitute the New York Fed model estimate. Historical values are organized by quarterly observation date; immutable releases preserve their separate as-of versions.</p>
             </div>
           </div>
           <div class="table-responsive">
@@ -1545,7 +1545,8 @@
           const priorSelection = decompositionSelector.value;
           const rules = visibleRules();
           decompositionSelector.innerHTML = rules.map(rule => `<option value="${rule.key}">${ruleLabel(rule)} · ${neutralRateLabel(rule)}</option>`).join('');
-          decompositionSelector.value = rules.some(rule => rule.key === priorSelection) ? priorSelection : rules[0].key;
+          const featuredSelection = rules.some(rule => rule.key === '4a') ? '4a' : rules[0].key;
+          decompositionSelector.value = rules.some(rule => rule.key === priorSelection) ? priorSelection : featuredSelection;
         };
         populateDecompositionSelector();
         decompositionSelector.addEventListener('change', () => renderChangeDecomposition(activeDecompositionSnapshot, activeDecompositionPrevious));
@@ -1557,7 +1558,7 @@
           return sum + median-Number(snapshot.effr);
         }, 0) / Math.max(1, recentSnapshots.length);
         const recentRelationship = recentAverageGap >= 0 ? 'below' : 'above';
-        document.getElementById('history-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> Across the four most recent quarterly observations, the actual effective federal funds rate averaged ${Math.abs(recentAverageGap).toFixed(1)} percentage points ${recentRelationship} the median of the six default rule benchmarks.`;
+        document.getElementById('history-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> Across the four most recent quarterly observations, the actual effective federal funds rate averaged ${Math.abs(recentAverageGap).toFixed(1)} percentage points ${recentRelationship} the median of the six featured rule benchmarks.`;
 
         const renderSourceVintageNotes = (snapshot, isLatest) => {
           const snapshotVintage = String(snapshot.date).slice(0,10);
@@ -1578,7 +1579,7 @@
           const [snapshotTargetLow, snapshotTargetHigh] = snapshot.target_range;
           const snapshotAboveCount = currentValues.filter(value => value > snapshotTargetHigh).length;
           const snapshotAllAbove = snapshotAboveCount === currentValues.length;
-          const scopeLabel = showAlternateEstimates ? `${currentValues.length} rule benchmarks` : 'six default rule benchmarks';
+          const scopeLabel = showAlternateEstimates ? `${currentValues.length} rule benchmarks` : 'six featured rule benchmarks';
           document.getElementById('headline').textContent = snapshotAllAbove ? `All ${scopeLabel} point above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rule benchmarks point above the ${isLatest ? 'current' : 'selected'} target range`;
           document.getElementById('hero-verdict').textContent = `The median rule points to a policy rate about ${Math.abs(currentMedian-snapshot.effr).toFixed(1)} percentage points ${currentMedian >= snapshot.effr ? 'above' : 'below'} today’s actual rate.`;
           document.getElementById('range').textContent = `${overviewPct(currentRange[0])}\u2013${overviewPct(currentRange[1])}`;
