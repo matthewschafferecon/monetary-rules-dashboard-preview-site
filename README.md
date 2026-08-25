@@ -6,14 +6,18 @@ Double-click `view-dashboard.cmd`. It starts a local-only web server, opens the 
 
 Keep the launcher window open while viewing the dashboard. Press Enter in that window to stop the server.
 
-The dashboard opens on the latest available rule-data vintage. Use the vintage
-selector to inspect any of the 59 reconstructed quarterly observations, compare
-each prescription with the prior vintage, and review its historical target range.
-The selected vintage is marked on the historical chart, and the What changed?
-panel decomposes each rule movement into its input contributions.
+The dashboard opens on the latest available snapshot. Use the snapshot selector
+to inspect any of the 59 reconstructed quarterly observations, compare each rule
+benchmark with the prior snapshot, and review its historical target range. The
+current lollipop chart and model table show the six Federal Reserve neutral-rate
+variants by default; **Show alternate neutral-rate estimates** reveals the six New
+York Fed model variants. The selected snapshot is marked on the historical chart,
+and the change panel decomposes each rule movement into its input contributions.
 The historical chart can be exported as PNG or SVG, while the complete dashboard
-dataset is available as an XLSX download. Equations, input definitions, and source-
-vintage notes are collected in the expandable methodology drawer.
+dataset is available as an XLSX download. It opens to a five-year view with the
+actual effective federal funds rate, Modified Taylor rule, and nominal GDP level
+rule visible. Equations, input definitions, and source details are collected in
+the expandable technical-methodology drawer.
 
 Meeting releases are also preserved as immutable public JSON snapshots in
 `data/archive`. The archive manifest records each release's cutoff, source vintage,
@@ -22,9 +26,9 @@ effective FFR date, URL, and SHA-256 hash.
 The **Copy link** control preserves the selected vintage, historical period, and
 visible chart series in the URL. Opening that URL restores the same view.
 
-For the latest vintage, the Current Prescriptions changes compare with the actual
-estimates in the last published Monetary Rules Report. Historical-vintage views
-continue to compare with the preceding rule-data vintage.
+For the latest snapshot, the model-table changes compare with the actual
+estimates in the last published Monetary Rules Report. Historical snapshot views
+continue to compare with the preceding quarterly snapshot.
 
 From PowerShell, the equivalent command is:
 

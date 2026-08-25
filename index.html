@@ -152,12 +152,29 @@
       overflow-wrap: break-word;
     }
 
-    .hero-deck {
+    .hero-primer {
       max-width: 820px;
-      margin-bottom: 34px;
+      margin-bottom: 14px;
       color: rgba(255,255,255,.88);
       font-size: clamp(1rem, 2vw, 1.2rem);
       line-height: 1.55;
+    }
+
+    .hero-verdict {
+      max-width: 820px;
+      margin-bottom: 10px;
+      color: var(--white);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .hero-caveat {
+      max-width: 860px;
+      margin-bottom: 30px;
+      color: rgba(255,255,255,.72);
+      font-size: .88rem;
+      line-height: 1.5;
     }
 
     .hero-stats {
@@ -274,8 +291,8 @@
     #prescription-plot {
       display: block;
       width: 100%;
+      height: auto;
       max-width: 100%;
-      min-height: 245px;
     }
 
     .plot-tooltip {
@@ -292,6 +309,40 @@
     }
 
     .plot-tooltip[hidden] { display: none; }
+
+    .rate-key {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 22px;
+      margin: -8px 0 18px;
+      padding: 14px 16px;
+      background: var(--soft-grey);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .84rem;
+    }
+
+    .rate-key-item { display: inline-flex; align-items: center; gap: 8px; }
+    .rate-key-line { width: 22px; height: 3px; background: var(--ink); }
+    .rate-key-band { width: 22px; height: 11px; background: color-mix(in srgb, var(--aier-green) 16%, var(--white)); border: 1px solid var(--aier-green); }
+    .rate-key-dot { width: 11px; height: 11px; background: var(--aier-blue); border: 2px solid var(--white); border-radius: 50%; box-shadow: 0 0 0 1px var(--aier-blue); }
+
+    .alternate-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 11px;
+      background: var(--white);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      cursor: pointer;
+      font: inherit;
+      font-size: .84rem;
+      font-weight: 600;
+    }
+
+    .alternate-control[aria-pressed="true"] { border-color: var(--aier-green); box-shadow: inset 0 -2px 0 var(--aier-green); }
 
     .plot-legend {
       display: flex;
@@ -403,6 +454,18 @@
       font-size: .86rem;
     }
 
+    .takeaway {
+      margin: 22px 0 0;
+      padding: 14px 16px;
+      background: color-mix(in srgb, var(--aier-gold) 8%, var(--white));
+      border-left: 4px solid var(--aier-gold);
+      color: var(--ink);
+      font-size: .92rem;
+      line-height: 1.5;
+    }
+
+    .takeaway strong { color: var(--aier-green); }
+
     .table-responsive { overflow-x: auto; }
 
     table {
@@ -482,7 +545,7 @@
 
     .decomposition { margin-top: 32px; padding-top: 26px; border-top: 1px solid var(--line); }
     .decomposition-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 20px; }
-    .decomposition-heading h3 { margin-bottom: 7px; font-family: "Financier Display", Georgia, "Times New Roman", serif; font-size: 1.65rem; font-weight: 400; }
+    .decomposition-heading h2 { margin-bottom: 7px; font-family: "Financier Display", Georgia, "Times New Roman", serif; font-size: clamp(1.65rem, 3vw, 2.3rem); font-weight: 400; letter-spacing: -.02em; }
     .decomposition-heading p { max-width: 710px; margin-bottom: 0; color: var(--muted); line-height: 1.5; }
     .decomposition-rule { display: grid; flex: 0 0 265px; gap: 6px; color: var(--grey); font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
     .decomposition-rule select { width: 100%; min-height: 40px; padding: 8px 34px 8px 10px; background: var(--white); color: var(--ink); border: 1px solid var(--line); border-radius: 2px; font: inherit; font-size: .84rem; font-weight: 600; letter-spacing: 0; text-transform: none; }
@@ -516,6 +579,22 @@
     .methodology-drawer[open] summary { border-bottom: 1px solid var(--line); }
 
     .methodology-content { padding: 24px 2px 28px; }
+
+    .plain-methodology {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .plain-methodology article {
+      padding: 18px;
+      background: var(--soft-grey);
+      border-top: 3px solid var(--aier-gold);
+    }
+
+    .plain-methodology h3 { margin-bottom: 7px; font-family: "Financier Display", Georgia, "Times New Roman", serif; font-size: 1.2rem; font-weight: 400; }
+    .plain-methodology p { margin-bottom: 0; color: var(--muted); line-height: 1.5; }
 
     .methodology-intro {
       display: grid;
@@ -625,6 +704,7 @@
       .section-heading { align-items: start; flex-direction: column; }
       .chart-wrap { height: 390px; }
       .methodology-intro { grid-template-columns: 1fr; }
+      .plain-methodology { grid-template-columns: 1fr; }
       .decomposition-heading { align-items: start; flex-direction: column; }
       .decomposition-rule { width: min(100%, 360px); flex-basis: auto; }
     }
@@ -635,7 +715,7 @@
       .stamp { text-align: left; }
       .hero { padding: 42px 0 36px; }
       h1 { font-size: 2.2rem; line-height: 1.08; }
-      .hero-deck { font-size: 1rem; }
+      .hero-primer { font-size: 1rem; }
       .hero-stats { grid-template-columns: 1fr; }
       .hero-stat + .hero-stat { padding-left: 0; border-left: 0; }
       .hero-stat { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.3); }
@@ -669,11 +749,13 @@
     </div>
     <div class="hero">
       <p class="eyebrow">Monetary Rules Dashboard</p>
-      <h1 id="headline">Current monetary-rule prescriptions</h1>
-      <p class="hero-deck" id="hero-deck">Loading the latest rule estimates and policy-rate comparison.</p>
+      <h1 id="headline">Current monetary-rule benchmarks</h1>
+      <p class="hero-primer">Monetary rules are simple formulas that say where the Federal Reserve&rsquo;s interest rate should be, given inflation and the state of the economy. This dashboard compares those benchmarks with where the rate actually is.</p>
+      <p class="hero-verdict" id="hero-verdict">Loading the latest rule estimates and policy-rate comparison.</p>
+      <p class="hero-caveat">A benchmark above the Federal Reserve&rsquo;s target range implies a tighter policy stance than today&rsquo;s. These rules are descriptive benchmarks&mdash;not forecasts, automatic recommendations, or mechanical instructions.</p>
       <div class="hero-stats" aria-label="Current summary">
-        <div class="hero-stat"><span class="hero-stat-label">Prescription range</span><span class="hero-stat-value" id="range">—</span></div>
-        <div class="hero-stat"><span class="hero-stat-label">Median prescription</span><span class="hero-stat-value" id="median">—</span></div>
+        <div class="hero-stat"><span class="hero-stat-label">Benchmark range</span><span class="hero-stat-value" id="range">—</span></div>
+        <div class="hero-stat"><span class="hero-stat-label">Median benchmark</span><span class="hero-stat-value" id="median">—</span></div>
         <div class="hero-stat"><span class="hero-stat-label">Current effective federal funds rate</span><span class="hero-stat-value" id="ffr">—</span></div>
       </div>
     </div>
@@ -683,43 +765,68 @@
   <main>
     <section class="section-block" aria-labelledby="current-heading">
       <div class="section-heading">
-        <div><h2 id="current-heading">Where the rules stand now</h2><p>Each point is one policy-rate prescription. The latest data vintage is identified by its FOMC cycle and update cutoff; earlier vintages retain their quarterly source-workbook dates.</p></div>
-        <label class="vintage-control" id="vintage-control" hidden>Data vintage
+        <div><h2 id="current-heading">What do the rules say now?</h2><p id="vintage-summary">Loading the latest data date. Use the menu to view earlier snapshots.</p></div>
+        <label class="vintage-control" id="vintage-control" hidden>View snapshot
           <select id="vintage-selector" aria-describedby="vintage-description"></select>
-          <span class="sr-only" id="vintage-description">Choose a data vintage to view its prescriptions and changes from the preceding available observation.</span>
+          <span class="sr-only" id="vintage-description">Choose an earlier snapshot to view its benchmarks and changes from the preceding available observation.</span>
         </label>
+      </div>
+      <div class="rate-key" aria-label="Key to the three rate concepts">
+        <span class="rate-key-item"><span class="rate-key-line" aria-hidden="true"></span><strong>Actual effective federal funds rate</strong>&mdash;the overnight rate that prevails</span>
+        <span class="rate-key-item"><span class="rate-key-band" aria-hidden="true"></span><strong>Federal Reserve target range</strong>&mdash;the official policy range</span>
+        <span class="rate-key-item"><span class="rate-key-dot" aria-hidden="true"></span><strong>Rule benchmarks</strong>&mdash;rates generated by the formulas</span>
       </div>
       <div class="current-grid">
         <div>
           <div class="plot-shell">
-            <svg id="prescription-plot" viewBox="0 0 900 250" role="img" aria-label="Current monetary-rule prescriptions compared with the effective federal funds rate and target range"></svg>
+            <svg id="prescription-plot" viewBox="0 0 900 440" role="img" aria-label="Sorted monetary-rule benchmarks compared with the actual effective federal funds rate and Federal Reserve target range"></svg>
             <div class="plot-tooltip" id="plot-tooltip" hidden></div>
           </div>
           <div class="plot-legend" aria-label="Prescription chart legend">
             <span class="legend-item"><span class="legend-dot"></span>Taylor rules</span>
-            <span class="legend-item"><span class="legend-dot ngdp"></span>NGDP rules</span>
-            <span class="legend-item"><span class="legend-band"></span>Target range</span>
+            <span class="legend-item"><span class="legend-dot ngdp"></span>Nominal GDP rules</span>
+            <button class="alternate-control" id="alternate-toggle-chart" type="button" aria-pressed="false">Show alternate neutral-rate estimates</button>
           </div>
         </div>
         <aside class="current-context" aria-label="Policy context">
-          <div><span class="context-label">Target range</span><span class="context-value" id="target-range">—</span><span class="context-subtext">Current FOMC target for the federal funds rate.</span></div>
-          <div><span class="context-label">Median gap over effective federal funds rate</span><span class="context-value" id="median-gap">—</span><span class="context-subtext">Median rule prescription minus the effective federal funds rate.</span></div>
+          <div><span class="context-label">Federal Reserve target range</span><span class="context-value" id="target-range">—</span><span class="context-subtext">The Federal Reserve&rsquo;s official target for the federal funds rate.</span></div>
+          <div><span class="context-label">Median gap over actual rate</span><span class="context-value" id="median-gap">—</span><span class="context-subtext">Median rule benchmark minus the actual effective federal funds rate.</span></div>
         </aside>
       </div>
+      <p class="takeaway" id="current-takeaway"><strong>Descriptive takeaway:</strong> Loading the current comparison.</p>
+    </section>
+
+    <section class="section-block" id="decomposition-section" aria-labelledby="decomposition-heading">
+      <div class="decomposition-heading">
+        <div>
+          <h2 id="decomposition-heading">Why did the benchmarks change?</h2>
+          <p>The bars show how each input raised or lowered the selected benchmark since the preceding snapshot. Changes are shown in basis points; 100 basis points equal 1 percentage point.</p>
+        </div>
+        <label class="decomposition-rule">Rule
+          <select id="decomposition-rule" aria-describedby="decomposition-summary"></select>
+        </label>
+      </div>
+      <div class="decomposition-summary" id="decomposition-summary" aria-live="polite"></div>
+      <div class="contribution-chart" id="contribution-chart" role="img" aria-labelledby="decomposition-heading decomposition-summary"></div>
+      <div class="contribution-legend" aria-label="Contribution direction">
+        <span><span class="contribution-key" aria-hidden="true"></span>Raised the benchmark</span>
+        <span><span class="contribution-key negative" aria-hidden="true"></span>Lowered the benchmark</span>
+      </div>
+      <p class="takeaway" id="decomposition-takeaway"><strong>Descriptive takeaway:</strong> Loading the largest driver of the latest change.</p>
     </section>
 
     <section class="section-block" aria-labelledby="history-heading">
       <div class="section-heading">
-        <div><h2 id="history-heading">The historical policy signal</h2><p>Compare representative rule paths with the effective federal funds rate. Use the controls to isolate a series or shorten the time window.</p></div>
+        <div><h2 id="history-heading">How does that compare with actual policy over time?</h2><p>Compare representative rule benchmarks with the actual effective federal funds rate. The default view focuses on the most recent five years; the full history remains one click away.</p></div>
       </div>
       <div class="controls">
         <div class="control-group" id="series-controls"><span class="control-label">Series</span></div>
         <div class="control-group" id="range-controls" aria-label="Historical time range">
           <span class="control-label">Period</span>
           <button class="control-button range-button" type="button" data-years="1" aria-pressed="false">1Y</button>
-          <button class="control-button range-button" type="button" data-years="5" aria-pressed="false">5Y</button>
+          <button class="control-button range-button" type="button" data-years="5" aria-pressed="true">5Y</button>
           <button class="control-button range-button" type="button" data-years="10" aria-pressed="false">10Y</button>
-          <button class="control-button range-button" type="button" data-years="all" aria-pressed="true">All</button>
+          <button class="control-button range-button" type="button" data-years="all" aria-pressed="false">All</button>
         </div>
         <div class="control-group export-controls" aria-label="Export historical chart">
           <span class="control-label">Export</span>
@@ -732,97 +839,79 @@
           <span class="share-status" id="share-status" aria-live="polite"></span>
         </div>
       </div>
-      <div class="chart-wrap"><canvas id="history" role="img" aria-label="Historical monetary-rule prescriptions and effective federal funds rate"></canvas></div>
+      <div class="chart-wrap"><canvas id="history" role="img" aria-label="Historical monetary-rule benchmarks and actual effective federal funds rate"></canvas></div>
       <div class="history-detail" id="history-detail" aria-live="polite">Move across the chart to inspect a quarterly observation.</div>
+      <p class="takeaway" id="history-takeaway"><strong>Descriptive takeaway:</strong> Loading the recent comparison.</p>
     </section>
 
     <section class="section-block" aria-labelledby="table-heading">
       <div class="section-heading">
-        <div><h2 id="table-heading">All current prescriptions</h2><p id="table-description">The gap measures percentage points above the current effective federal funds rate. Values are shown to two decimal places.</p></div>
+        <div><h2 id="table-heading">What does each model say?</h2><p id="table-description">The gap measures percentage points above the current actual effective federal funds rate. Detailed values are shown to two decimal places.</p></div>
+        <button class="alternate-control" id="alternate-toggle-table" type="button" aria-pressed="false">Show alternate neutral-rate estimates</button>
       </div>
       <div class="table-responsive">
         <table>
-          <thead><tr><th>Family</th><th>Specification</th><th>r* measure</th><th class="numeric">Prescription</th><th class="numeric" id="change-column-heading">Change From Last FOMC</th><th class="numeric">Gap vs. effective FFR</th><th>Status</th></tr></thead>
+          <thead><tr><th>Family</th><th>Specification</th><th>Neutral-rate estimate</th><th class="numeric">Benchmark rate</th><th class="numeric" id="change-column-heading">Change From Last FOMC</th><th class="numeric">Gap vs. actual rate</th><th>Status</th></tr></thead>
           <tbody id="rules-body"></tbody>
         </table>
       </div>
-      <div class="decomposition" aria-labelledby="decomposition-heading">
-        <div class="decomposition-heading">
-          <div>
-            <h3 id="decomposition-heading">What changed?</h3>
-            <p>Decompose the selected rule&rsquo;s change into the contribution from each input. Contributions sum to the total change from the prior quarterly observation.</p>
-          </div>
-          <label class="decomposition-rule">Rule
-            <select id="decomposition-rule" aria-describedby="decomposition-summary"></select>
-          </label>
-        </div>
-        <div class="decomposition-summary" id="decomposition-summary" aria-live="polite"></div>
-        <div class="contribution-chart" id="contribution-chart" role="img" aria-labelledby="decomposition-heading decomposition-summary"></div>
-        <div class="contribution-legend" aria-label="Contribution direction">
-          <span><span class="contribution-key" aria-hidden="true"></span>Raises the prescription</span>
-          <span><span class="contribution-key negative" aria-hidden="true"></span>Lowers the prescription</span>
-        </div>
+    </section>
+
+    <section class="section-block" id="methodology" aria-labelledby="methodology-heading">
+      <div class="section-heading">
+        <div><h2 id="methodology-heading">Why do the rules differ?</h2><p>Every rule combines economic conditions in a slightly different way. Those choices create a range of benchmarks rather than one definitive answer.</p></div>
+      </div>
+      <div class="plain-methodology">
+        <article><h3>Different inflation views</h3><p>Some Taylor rules use current inflation; others use a forecast of where inflation is heading.</p></article>
+        <article><h3>Different degrees of smoothing</h3><p>Some rules react immediately, while others place weight on the previous policy rate and therefore move more gradually.</p></article>
+        <article><h3>Different economic signals</h3><p>Taylor rules emphasize inflation and labor-market conditions. Nominal GDP rules emphasize total spending growth or its path.</p></article>
       </div>
       <details class="methodology-drawer" id="rule-methodology">
-        <summary>Rule methodology, equations, and observation dates</summary>
+        <summary>Technical methodology, equations, symbols, and data details</summary>
         <div class="methodology-content">
           <div class="methodology-intro">
             <div>
-              <h3>Inputs</h3>
+              <h3>Inputs and abbreviations</h3>
               <ul>
-                <li><strong>i<sub>t-1</sub></strong>: lagged effective federal funds rate.</li>
-                <li><strong>r*</strong>: neutral real rate, using either the SEP longer-run measure or the Holston-Laubach-Williams estimate.</li>
-                <li><strong>&pi;</strong> and <strong>&pi;*</strong>: PCE inflation and its target; <strong>&pi;<sup>e</sup></strong> is the SPF forecast.</li>
-                <li><strong>u gap</strong>: the workbook unemployment-gap measure.</li>
-                <li><strong>g<sub>N</sub></strong> and <strong>g*</strong>: nominal GDP growth and its target; <strong>N gap</strong> is the nominal-spending gap.</li>
+                <li><strong>i<sub>t-1</sub></strong>: previous actual effective federal funds rate.</li>
+                <li><strong>r*</strong>: neutral real interest-rate estimate. SEP is the Federal Reserve&rsquo;s Summary of Economic Projections; HLW is the New York Fed&rsquo;s Holston-Laubach-Williams model.</li>
+                <li><strong>&pi;</strong> and <strong>&pi;*</strong>: personal consumption expenditures (PCE) inflation and its target; <strong>&pi;<sup>e</sup></strong> is the Survey of Professional Forecasters (SPF) forecast.</li>
+                <li><strong>u gap</strong>: the labor-market gap used in the source workbook.</li>
+                <li><strong>g<sub>N</sub></strong> and <strong>g*</strong>: nominal gross domestic product (NGDP) growth and its target; <strong>N gap</strong> is the nominal-spending gap.</li>
               </ul>
             </div>
             <div>
-              <h3>Source-vintage notes</h3>
-              <p id="source-vintage-notes">Loading source vintages&hellip;</p>
-              <p>SEP-based rows use the FOMC&rsquo;s longer-run real-rate measure. HLW rows substitute the New York Fed&rsquo;s Holston-Laubach-Williams neutral-rate estimate. Historical values are organized by quarterly observation date; immutable dashboard releases preserve the separate as-of versions.</p>
+              <h3>Dates and neutral-rate alternatives</h3>
+              <p id="technical-metadata">Loading release and build details&hellip;</p>
+              <p id="source-vintage-notes">Loading source details&hellip;</p>
+              <p>Default rows use the Federal Reserve&rsquo;s own longer-run neutral-rate estimate from the Summary of Economic Projections. Alternate rows substitute the New York Fed model estimate. Historical values are organized by quarterly observation date; immutable releases preserve their separate as-of versions.</p>
             </div>
           </div>
           <div class="table-responsive">
             <table class="equation-table">
-              <thead><tr><th>Rule</th><th>r* measure</th><th>Equation</th></tr></thead>
+              <thead><tr><th>Rule</th><th>Neutral-rate estimate</th><th>Equation</th></tr></thead>
               <tbody>
-                <tr><th scope="row">Original Taylor</th><td>SEP</td><td><code>i = r*<sub>SEP</sub> + &pi;* + 1.5(&pi; &minus; &pi;*) + 0.5(u gap)</code></td></tr>
-                <tr><th scope="row">Original Taylor</th><td>HLW</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi; &minus; &pi;*) + 0.5(u gap)</code></td></tr>
-                <tr><th scope="row">Forward-looking Taylor</th><td>SEP</td><td><code>i = r*<sub>SEP</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
-                <tr><th scope="row">Forward-looking Taylor</th><td>HLW</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
-                <tr><th scope="row">Smoothed Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, SEP)</code></td></tr>
-                <tr><th scope="row">Smoothed Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, HLW)</code></td></tr>
-                <tr><th scope="row">Modified Taylor</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, SEP)</code></td></tr>
-                <tr><th scope="row">Modified Taylor</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, HLW)</code></td></tr>
-                <tr><th scope="row">NGDP growth</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
-                <tr><th scope="row">NGDP growth</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
-                <tr><th scope="row">NGDP level</th><td>SEP</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + N gap]</code></td></tr>
-                <tr><th scope="row">NGDP level</th><td>HLW</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + N gap]</code></td></tr>
+                <tr><th scope="row">Original Taylor</th><td>Fed projection (SEP)</td><td><code>i = r*<sub>SEP</sub> + &pi;* + 1.5(&pi; &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Original Taylor</th><td>NY Fed model (HLW)</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi; &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Forward-looking Taylor</th><td>Fed projection (SEP)</td><td><code>i = r*<sub>SEP</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Forward-looking Taylor</th><td>NY Fed model (HLW)</td><td><code>i = r*<sub>HLW</sub> + &pi;* + 1.5(&pi;<sup>e</sup> &minus; &pi;*) + 0.5(u gap)</code></td></tr>
+                <tr><th scope="row">Smoothed Taylor</th><td>Fed projection (SEP)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, SEP)</code></td></tr>
+                <tr><th scope="row">Smoothed Taylor</th><td>NY Fed model (HLW)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Original Taylor, HLW)</code></td></tr>
+                <tr><th scope="row">Modified Taylor</th><td>Fed projection (SEP)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, SEP)</code></td></tr>
+                <tr><th scope="row">Modified Taylor</th><td>NY Fed model (HLW)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5(Forward-looking Taylor, HLW)</code></td></tr>
+                <tr><th scope="row">Nominal GDP growth</th><td>Fed projection (SEP)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
+                <tr><th scope="row">Nominal GDP growth</th><td>NY Fed model (HLW)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + (g<sub>N</sub> &minus; g*)]</code></td></tr>
+                <tr><th scope="row">Nominal GDP level</th><td>Fed projection (SEP)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>SEP</sub>) + N gap]</code></td></tr>
+                <tr><th scope="row">Nominal GDP level</th><td>NY Fed model (HLW)</td><td><code>i = 0.5i<sub>t-1</sub> + 0.5[(2 + r*<sub>HLW</sub>) + N gap]</code></td></tr>
               </tbody>
             </table>
           </div>
+          <div class="methodology-intro" style="margin-top:24px">
+            <div><h3>Related reports</h3><ul class="report-list" id="report-links"></ul><a class="download-link" href="data/monetary-rules-dashboard-data.xlsx" download>Download dashboard data (XLSX)</a></div>
+            <div><h3>Primary data sources</h3><ul class="source-list"><li><a href="https://www.atlantafed.org/research-and-data/data/taylor-rule">Federal Reserve Bank of Atlanta</a> Taylor Rule Utility</li><li><a href="https://www.newyorkfed.org/markets/reference-rates/effr">Federal Reserve Bank of New York</a> actual effective federal funds rate</li><li><a href="https://www.bea.gov/data/gdp/gross-domestic-product">Bureau of Economic Analysis</a> nominal gross domestic product</li><li><a id="neutrality-report-source">Monetary Neutrality Report</a> nominal-spending gap</li></ul></div>
+          </div>
         </div>
       </details>
-    </section>
-
-    <section class="section-block methodology" id="methodology" aria-labelledby="methodology-heading">
-      <div>
-        <h2 id="methodology-heading">How to read the dashboard</h2>
-        <p>The monetary rules translate inflation, labor-market conditions, nominal spending, the neutral real rate, and prior policy settings into federal funds rate prescriptions. They are benchmarks for evaluating policy—not mechanical instructions or predictions.</p>
-        <h3>Related reports</h3>
-        <ul class="report-list" id="report-links"></ul>
-        <a class="download-link" href="data/monetary-rules-dashboard-data.xlsx" download>Download dashboard data (XLSX)</a>
-      </div>
-      <div>
-        <h3>Primary data sources</h3>
-        <ul class="source-list">
-          <li><a href="https://www.atlantafed.org/research-and-data/data/taylor-rule">Federal Reserve Bank of Atlanta</a> Taylor Rule Utility</li>
-          <li><a href="https://www.newyorkfed.org/markets/reference-rates/effr">Federal Reserve Bank of New York</a> Effective FFR</li>
-          <li><a href="https://www.bea.gov/data/gdp/gross-domestic-product">Bureau of Economic Analysis</a> Nominal GDP</li>
-          <li><a id="neutrality-report-source">Monetary Neutrality Report</a> Nominal-spending gap</li>
-        </ul>
-      </div>
     </section>
   </main>
 
@@ -832,7 +921,10 @@
 
   <script>
     const pct = value => `${Number(value).toFixed(2)}%`;
+    const overviewPct = value => `${Number(value).toFixed(1)}%`;
+    const targetRangePct = value => `${Number(value).toFixed(2).replace(/0$/, '')}%`;
     const gap = value => `${value >= 0 ? '+' : ''}${Number(value).toFixed(2)} pp`;
+    const overviewGap = value => `${value >= 0 ? '+' : ''}${Number(value).toFixed(1)} pp`;
     const basisPoints = value => `${value > 0 ? '+' : ''}${Math.round(value * 100)} bp`;
     // AIER brand chart palette (validated for CVD + contrast on white; navy tuned from legacy #084462)
     const COLORS = { black:'#171717', blue:'#3987C4', grey:'#797D82', orange:'#C08000', pink:'#D14B2F', purple:'#0E5A8C', green:'#923D28', brand:'#083E00' };
@@ -841,16 +933,17 @@
       Chart.defaults.color = COLORS.grey;
     }
     const SERIES = {
-      effr: { label:'Effective FFR', color:COLORS.black, width:3.4, dash:[], swatch:'ffr' },
-      taylor: { label:'Taylor', color:COLORS.blue, width:2.2, dash:[8,4], swatch:'taylor' },
-      modified_taylor: { label:'Modified Taylor', color:COLORS.purple, width:2.2, dash:[2,3], swatch:'modified' },
-      ngdp_growth: { label:'NGDP growth', color:COLORS.orange, width:2.2, dash:[10,4], swatch:'ngdp-growth' },
-      ngdp_level: { label:'NGDP level', color:COLORS.green, width:2.2, dash:[5,3], swatch:'ngdp-level' }
+      effr: { label:'Actual effective federal funds rate', endLabel:'Actual rate', color:COLORS.black, width:3.4, dash:[], swatch:'ffr' },
+      taylor: { label:'Original Taylor rule', endLabel:'Original Taylor', color:COLORS.blue, width:2.2, dash:[8,4], swatch:'taylor' },
+      modified_taylor: { label:'Modified Taylor rule', endLabel:'Modified Taylor', color:COLORS.purple, width:2.2, dash:[2,3], swatch:'modified' },
+      ngdp_growth: { label:'Nominal GDP growth rule', endLabel:'Nominal GDP growth', color:COLORS.orange, width:2.2, dash:[10,4], swatch:'ngdp-growth' },
+      ngdp_level: { label:'Nominal GDP level rule', endLabel:'Nominal GDP level', color:COLORS.green, width:2.2, dash:[5,3], swatch:'ngdp-level' }
     };
+    const DEFAULT_HISTORY_SERIES = ['effr', 'modified_taylor', 'ngdp_level'];
     const SHARE_PERIODS = new Set(['1', '5', '10', 'all']);
     const readSharedView = () => {
       const parameters = new URLSearchParams(window.location.search);
-      const period = SHARE_PERIODS.has(parameters.get('period')) ? parameters.get('period') : 'all';
+      const period = SHARE_PERIODS.has(parameters.get('period')) ? parameters.get('period') : '5';
       const vintage = /^\d{4}-\d{2}-\d{2}$/.test(parameters.get('vintage') || '') ? parameters.get('vintage') : null;
       const seriesParameter = parameters.get('series');
       const validSeries = seriesParameter === null
@@ -889,12 +982,19 @@
       { family:'NGDP', spec:'Level', source:'SEP', key:'ngdp3' },
       { family:'NGDP', spec:'Level', source:'HLW', key:'ngdp4' }
     ];
+    let showAlternateEstimates = false;
     const CONTRIBUTION_LABELS = {
-      lagged_ffr:'Lagged effective FFR', inflation_target:'Inflation target',
-      r_star_sep:'SEP r*', r_star_hlw:'HLW r*', pce:'PCE inflation',
-      pce_spf:'Expected PCE inflation', unemp_gap:'Unemployment gap',
-      ngdp_target:'NGDP growth target', ngdp:'Nominal GDP growth',
+      lagged_ffr:'Previous policy rate', inflation_target:'Inflation target',
+      r_star_sep:'Fed neutral-rate estimate', r_star_hlw:'NY Fed neutral-rate estimate', pce:'Current inflation',
+      pce_spf:'Expected inflation', unemp_gap:'Labor-market gap',
+      ngdp_target:'Nominal GDP growth target', ngdp:'Current nominal GDP growth',
       nominal_gap:'Nominal-spending gap'
+    };
+    const CONTRIBUTION_TECHNICAL = {
+      lagged_ffr:'Lagged effective federal funds rate', inflation_target:'Inflation target',
+      r_star_sep:'SEP r*', r_star_hlw:'HLW r*', pce:'PCE inflation',
+      pce_spf:'SPF expected PCE inflation', unemp_gap:'Workbook unemployment gap',
+      ngdp_target:'NGDP growth target', ngdp:'Nominal GDP growth', nominal_gap:'Nominal-spending gap'
     };
     const RULE_COMPONENTS = {
       '1a':[['taylor','r_star_sep',1],['taylor','pce',1.5],['taylor','inflation_target',-.5],['taylor','unemp_gap',.5]],
@@ -910,7 +1010,10 @@
       ngdp3:[['ngdp','lagged_ffr',.5],['ngdp','r_star_sep',.5],['ngdp','nominal_gap',.5]],
       ngdp4:[['ngdp','lagged_ffr',.5],['ngdp','r_star_hlw',.5],['ngdp','nominal_gap',.5]]
     };
-    const ruleLabel = rule => rule.family === 'NGDP' ? `NGDP ${rule.spec.toLowerCase()}` : `${rule.spec} Taylor`;
+    const ruleLabel = rule => rule.family === 'NGDP' ? `Nominal GDP ${rule.spec.toLowerCase()} rule` : `${rule.spec} Taylor rule`;
+    const chartRuleLabel = rule => rule.family === 'NGDP' ? `Nominal GDP ${rule.spec.toLowerCase()}` : `${rule.spec} Taylor`;
+    const neutralRateLabel = rule => rule.source === 'SEP' ? 'Fed projection (SEP)' : 'NY Fed model (HLW)';
+    const visibleRules = () => showAlternateEstimates ? RULES : RULES.filter(rule => rule.source === 'SEP');
     const dateParts = value => String(value).slice(0,10).split('-').map(Number);
     const formatQuarter = value => {
       const [year, month] = dateParts(value);
@@ -930,70 +1033,71 @@
     function renderPrescriptionPlot(data) {
       const svg = document.getElementById('prescription-plot');
       const tooltip = document.getElementById('plot-tooltip');
-      const shell = svg.parentElement;
       const [targetLow, targetHigh] = data.target_range;
-      const values = RULES.map(rule => data.rules[rule.key]);
+      const rules = [...visibleRules()].sort((a,b) => data.rules[b.key] - data.rules[a.key]);
+      const values = rules.map(rule => data.rules[rule.key]);
       const domainMin = Math.floor((Math.min(...values, targetLow, data.effr) - .2) * 4) / 4;
       const domainMax = Math.ceil((Math.max(...values, targetHigh, data.effr) + .2) * 4) / 4;
-      const left = 62, right = 872, top = 34, axisY = 196;
+      const mobilePlot = window.innerWidth <= 640;
+      const width = mobilePlot ? 520 : 900;
+      const left = mobilePlot ? 190 : 245;
+      const right = mobilePlot ? 485 : 835;
+      const top = 42, rowHeight = mobilePlot ? 54 : 48;
+      const axisY = top + rules.length * rowHeight + 14;
+      const height = axisY + 54;
+      const rowFont = mobilePlot ? 16 : 13;
+      const valueFont = mobilePlot ? 14 : 12;
       const x = value => left + (value - domainMin) * (right - left) / (domainMax - domainMin);
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
       svg.replaceChildren();
 
       const title = svgNode('title');
-      title.textContent = 'Current monetary-rule prescriptions compared with the effective federal funds rate and target range';
+      title.textContent = 'Sorted monetary-rule benchmarks compared with the actual effective federal funds rate and Federal Reserve target range';
       svg.appendChild(title);
-      svg.appendChild(svgNode('rect', { x:x(targetLow), y:top, width:Math.max(4, x(targetHigh)-x(targetLow)), height:axisY-top, fill:COLORS.brand, opacity:'.12' }));
+      svg.appendChild(svgNode('rect', { x:x(targetLow), y:top-16, width:Math.max(4, x(targetHigh)-x(targetLow)), height:axisY-top+16, fill:COLORS.brand, opacity:'.12' }));
+      svg.appendChild(svgNode('line', { x1:x(data.effr), x2:x(data.effr), y1:top-16, y2:axisY, stroke:COLORS.black, 'stroke-width':'3' }));
+      const actualLabel = svgNode('text', { x:x(data.effr), y:18, fill:COLORS.black, 'text-anchor':'middle', 'font-size':String(valueFont), 'font-weight':'700' });
+      actualLabel.textContent = `Actual rate ${overviewPct(data.effr)}`;
+      svg.appendChild(actualLabel);
 
-      const addMarker = (value, color, label, dash = '') => {
-        const line = svgNode('line', { x1:x(value), x2:x(value), y1:top-7, y2:axisY+7, stroke:color, 'stroke-width':'2' });
-        if (dash) line.setAttribute('stroke-dasharray', dash);
-        svg.appendChild(line);
-        const text = svgNode('text', { x:x(value), y:22, fill:color, 'text-anchor':'middle', 'font-size':'12', 'font-weight':'700' });
-        text.textContent = label;
-        svg.appendChild(text);
-      };
-
-      addMarker(data.effr, COLORS.black, `Effective FFR ${pct(data.effr)}`);
-      addMarker(data.median, COLORS.pink, `Median ${pct(data.median)}`, '5 4');
-
-      const sortedRules = [...RULES].sort((a,b) => data.rules[a.key] - data.rules[b.key]);
-      const lanes = [64, 94, 124, 154];
-      sortedRules.forEach((rule, index) => {
+      rules.forEach((rule, index) => {
         const value = data.rules[rule.key];
-        const cx = x(value), cy = lanes[index % lanes.length];
+        const cx = x(value), cy = top + index * rowHeight + rowHeight / 2;
         const familyColor = rule.family === 'Taylor' ? COLORS.blue : COLORS.orange;
-        let mark;
-        if (rule.source === 'SEP') {
-          mark = svgNode('circle', { cx, cy, r:'8', fill:familyColor, stroke:'#FFFFFF', 'stroke-width':'2', tabindex:'0' });
-        } else {
-          mark = svgNode('rect', { x:cx-6.5, y:cy-6.5, width:'13', height:'13', fill:'#FFFFFF', stroke:familyColor, 'stroke-width':'3', transform:`rotate(45 ${cx} ${cy})`, tabindex:'0' });
-        }
+        const rowLabel = svgNode('text', { x:left-14, y:cy+4, fill:COLORS.black, 'text-anchor':'end', 'font-size':String(rowFont), 'font-weight':'600' });
+        rowLabel.textContent = showAlternateEstimates ? `${chartRuleLabel(rule)} — ${rule.source}` : chartRuleLabel(rule);
+        svg.appendChild(rowLabel);
+        svg.appendChild(svgNode('line', { x1:x(data.effr), x2:cx, y1:cy, y2:cy, stroke:familyColor, 'stroke-width':'2', opacity:'.65' }));
+        const mark = svgNode('circle', { cx, cy, r:'8', fill:familyColor, stroke:'#FFFFFF', 'stroke-width':'2', tabindex:'0' });
         mark.setAttribute('role', 'img');
-        mark.setAttribute('aria-label', `${rule.spec} ${rule.family} rule, ${rule.source} r-star: ${pct(value)}`);
+        mark.setAttribute('aria-label', `${ruleLabel(rule)}, ${neutralRateLabel(rule)}: ${pct(value)}`);
         const showTooltip = () => {
           const svgRect = svg.getBoundingClientRect();
-          tooltip.textContent = `${rule.spec} ${rule.family} · ${rule.source} r* · ${pct(value)} · ${gap(value-data.effr)} vs. effective FFR`;
+          tooltip.textContent = `${ruleLabel(rule)} · ${neutralRateLabel(rule)} · ${pct(value)} · ${gap(value-data.effr)} vs. actual rate`;
           tooltip.hidden = false;
-          tooltip.style.left = `${cx / 900 * svgRect.width}px`;
-          tooltip.style.top = `${cy / 250 * svgRect.height}px`;
+          tooltip.style.left = `${cx / width * svgRect.width}px`;
+          tooltip.style.top = `${cy / height * svgRect.height}px`;
         };
         mark.addEventListener('mouseenter', showTooltip);
         mark.addEventListener('focus', showTooltip);
         mark.addEventListener('mouseleave', () => { tooltip.hidden = true; });
         mark.addEventListener('blur', () => { tooltip.hidden = true; });
         svg.appendChild(mark);
+        const valueLabel = svgNode('text', { x:Math.min(cx+13, right-2), y:cy+4, fill:familyColor, 'text-anchor':'start', 'font-size':String(valueFont), 'font-weight':'700' });
+        valueLabel.textContent = overviewPct(value);
+        svg.appendChild(valueLabel);
       });
 
       svg.appendChild(svgNode('line', { x1:left, x2:right, y1:axisY, y2:axisY, stroke:COLORS.grey, 'stroke-width':'1' }));
       const tickStart = Math.ceil(domainMin * 2) / 2;
       for (let tick=tickStart; tick<=domainMax+.001; tick+=.5) {
         svg.appendChild(svgNode('line', { x1:x(tick), x2:x(tick), y1:axisY, y2:axisY+6, stroke:COLORS.grey, 'stroke-width':'1' }));
-        const label = svgNode('text', { x:x(tick), y:220, fill:COLORS.grey, 'text-anchor':'middle', 'font-size':'12' });
+        const label = svgNode('text', { x:x(tick), y:axisY+24, fill:COLORS.grey, 'text-anchor':'middle', 'font-size':'12' });
         label.textContent = `${tick.toFixed(1)}%`;
         svg.appendChild(label);
       }
-      const axisLabel = svgNode('text', { x:(left+right)/2, y:243, fill:COLORS.grey, 'text-anchor':'middle', 'font-size':'12' });
-      axisLabel.textContent = 'Federal funds rate prescription';
+      const axisLabel = svgNode('text', { x:(left+right)/2, y:axisY+48, fill:COLORS.grey, 'text-anchor':'middle', 'font-size':'12' });
+      axisLabel.textContent = 'Federal funds rate (percent)';
       svg.appendChild(axisLabel);
     }
 
@@ -1008,13 +1112,13 @@
         ? 'Change From Last FOMC'
         : 'Change from prior quarterly observation';
       document.getElementById('table-description').textContent = isReportComparison
-        ? `Changes compare with the Monetary Rules Report published ${reportDate}. The gap measures percentage points above the current effective federal funds rate.`
-        : 'Changes compare with the preceding quarterly observation. The gap measures percentage points above the selected effective federal funds rate.';
-      document.getElementById('rules-body').innerHTML = RULES.map(rule => {
+        ? `Changes compare with the Monetary Rules Report published ${reportDate}. The gap measures percentage points above the current actual effective federal funds rate.`
+        : 'Changes compare with the preceding quarterly observation. The gap measures percentage points above the selected actual effective federal funds rate.';
+      document.getElementById('rules-body').innerHTML = visibleRules().map(rule => {
         const value = data.rules[rule.key];
         const status = value > targetHigh ? 'Above range' : value < targetLow ? 'Below range' : 'Within range';
         const markerClasses = ['family-marker', rule.family === 'NGDP' ? 'ngdp' : '', rule.source === 'HLW' ? 'hlw' : ''].filter(Boolean).join(' ');
-        let change = '<span class="change-value unchanged" aria-label="No preceding data vintage available">&mdash;</span>';
+        let change = '<span class="change-value unchanged" aria-label="No preceding snapshot available">&mdash;</span>';
         if (comparisonRules && Number.isFinite(comparisonRules[rule.key])) {
           const delta = value - comparisonRules[rule.key];
           const direction = Math.abs(delta) < .005 ? 'unchanged' : delta > 0 ? 'up' : 'down';
@@ -1023,7 +1127,8 @@
           const basisLabel = isReportComparison ? 'the last published Monetary Rules Report' : 'the prior quarterly observation';
           change = `<span class="change-value ${direction}" aria-label="${accessible} ${Math.abs(Math.round(delta * 100))} basis points from ${basisLabel}"><span class="change-symbol" aria-hidden="true">${symbol}</span>${basisPoints(delta)}</span>`;
         }
-        return `<tr><td><span class="${markerClasses}"></span>${rule.family}</td><th scope="row">${rule.spec}</th><td>${rule.source}</td><td class="numeric">${pct(value)}</td><td class="numeric">${change}</td><td class="numeric">${gap(value-data.effr)}</td><td><span class="status">${status}</span></td></tr>`;
+        const familyLabel = rule.family === 'NGDP' ? 'Nominal GDP' : 'Taylor';
+        return `<tr><td><span class="${markerClasses}"></span>${familyLabel}</td><th scope="row">${rule.spec}</th><td>${neutralRateLabel(rule)}</td><td class="numeric">${pct(value)}</td><td class="numeric">${change}</td><td class="numeric">${gap(value-data.effr)}</td><td><span class="status">${status}</span></td></tr>`;
       }).join('');
     }
 
@@ -1033,10 +1138,11 @@
       const summary = document.getElementById('decomposition-summary');
       const rule = RULES.find(item => item.key === selector.value) || RULES[0];
       if (!previous?.rules || !snapshot.change_from_previous) {
-        summary.textContent = `${ruleLabel(rule)} (${rule.source} r*): no prior quarterly observation is available.`;
+        summary.textContent = `${ruleLabel(rule)} using the ${neutralRateLabel(rule).toLowerCase()}: no prior quarterly observation is available.`;
         chart.className = 'contribution-chart decomposition-empty';
         chart.textContent = 'A change decomposition begins with the second available quarterly observation.';
         chart.setAttribute('aria-label', summary.textContent);
+        document.getElementById('decomposition-takeaway').innerHTML = '<strong>Descriptive takeaway:</strong> No prior observation is available for this comparison.';
         return;
       }
 
@@ -1055,20 +1161,83 @@
         const decimals = Math.abs(valueInBasisPoints) < 1 && valueInBasisPoints !== 0 ? 1 : 0;
         return `${valueInBasisPoints > 0 ? '+' : ''}${valueInBasisPoints.toFixed(decimals)} bp`;
       };
-      summary.textContent = `${ruleLabel(rule)} (${rule.source} r*) moved from ${pct(previous.rules[rule.key])} to ${pct(snapshot.rules[rule.key])}, a ${basisPoints(total)} change.`;
+      const positive = [...entries].filter(item => item.value > 0).sort((a,b) => b.value-a.value)[0];
+      const negative = [...entries].filter(item => item.value < 0).sort((a,b) => a.value-b.value)[0];
+      const movement = total < -.005 ? `fell ${Math.abs(Math.round(total*100))} basis points` : total > .005 ? `rose ${Math.abs(Math.round(total*100))} basis points` : 'was essentially unchanged';
+      const drivers = [
+        negative ? `${CONTRIBUTION_LABELS[negative.input]} lowered it by ${Math.abs(Math.round(negative.value*100))} basis points` : null,
+        positive ? `${CONTRIBUTION_LABELS[positive.input]} raised it by ${Math.abs(Math.round(positive.value*100))} basis points` : null
+      ].filter(Boolean);
+      summary.textContent = `${ruleLabel(rule)} ${movement}${drivers.length ? `: ${drivers.join(', while ')}.` : '.'}`;
       chart.className = 'contribution-chart';
       chart.setAttribute('aria-label', `${summary.textContent} ${entries.map(item => `${CONTRIBUTION_LABELS[item.input]} ${formatContribution(item.value)}`).join('; ')}.`);
       chart.innerHTML = entries.map(item => {
         const width = Math.abs(item.value) / maxAbsolute * 48;
         const left = item.value >= 0 ? 50 : 50 - width;
         const direction = item.value < 0 ? ' negative' : '';
-        return `<div class="contribution-row"><span class="contribution-label">${CONTRIBUTION_LABELS[item.input]}</span><span class="contribution-track" aria-hidden="true"><span class="contribution-bar${direction}" style="left:${left.toFixed(2)}%;width:${width.toFixed(2)}%"></span></span><span class="contribution-value">${formatContribution(item.value)}</span></div>`;
+        return `<div class="contribution-row"><span class="contribution-label" title="${CONTRIBUTION_TECHNICAL[item.input]}">${CONTRIBUTION_LABELS[item.input]}</span><span class="contribution-track" aria-hidden="true"><span class="contribution-bar${direction}" style="left:${left.toFixed(2)}%;width:${width.toFixed(2)}%"></span></span><span class="contribution-value">${formatContribution(item.value)}</span></div>`;
       }).join('');
+      const largest = [...entries].sort((a,b) => Math.abs(b.value)-Math.abs(a.value))[0];
+      const effect = largest.value < 0 ? 'lowering' : 'raising';
+      document.getElementById('decomposition-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> ${CONTRIBUTION_LABELS[largest.input]} was the largest driver of the latest change, ${effect} this benchmark by ${Math.abs(Math.round(largest.value*100))} basis points.`;
     }
+
+    const historyAnnotations = {
+      id:'historyAnnotations',
+      afterDatasetsDraw(chart) {
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        const visible = chart.data.datasets.map((dataset, index) => ({ dataset, index, meta:chart.getDatasetMeta(index) }))
+          .filter(item => chart.isDatasetVisible(item.index) && item.meta.data.length);
+        const labels = visible.map(item => {
+          const point = item.meta.data.at(-1);
+          return { ...item, x:point.x, targetY:point.y, y:point.y };
+        }).sort((a,b) => a.y-b.y);
+        const minimumGap = 16;
+        labels.forEach((item, index) => {
+          if (index) item.y = Math.max(item.y, labels[index-1].y + minimumGap);
+        });
+        const overflow = labels.at(-1)?.y - (chartArea.bottom-6);
+        if (overflow > 0) labels.forEach(item => { item.y -= overflow; });
+        if (labels[0]?.y < chartArea.top+6) {
+          const shift = chartArea.top+6-labels[0].y;
+          labels.forEach(item => { item.y += shift; });
+        }
+        ctx.save();
+        const labelSize = chart.width > 1000 ? 22 : window.innerWidth <= 640 ? 10 : 11;
+        ctx.font = `${labelSize}px Figure, Segoe UI, sans-serif`;
+        ctx.textBaseline = 'middle';
+        labels.forEach(item => {
+          ctx.strokeStyle = item.dataset.borderColor;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(item.x+2, item.targetY);
+          ctx.lineTo(chartArea.right+7, item.y);
+          ctx.stroke();
+          ctx.fillStyle = item.dataset.borderColor;
+          ctx.fillText(SERIES[item.dataset.key].endLabel, chartArea.right+10, item.y);
+        });
+        const pandemicIndex = chart.data.labels.findIndex(label => String(label).slice(0,7) >= '2020-03' && String(label).slice(0,7) <= '2020-09');
+        if (pandemicIndex >= 0) {
+          const pandemicX = chart.scales.x.getPixelForValue(pandemicIndex);
+          ctx.strokeStyle = COLORS.grey;
+          ctx.setLineDash([3,3]);
+          ctx.beginPath();
+          ctx.moveTo(pandemicX, chartArea.top+18);
+          ctx.lineTo(pandemicX, chartArea.bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = COLORS.grey;
+          ctx.textAlign = 'center';
+          ctx.fillText('Pandemic shock', pandemicX, chartArea.top+9);
+        }
+        ctx.restore();
+      }
+    };
 
     function buildHistoryChart(data, initialView, onStateChange) {
       const keys = Object.keys(SERIES);
-      const initiallyVisible = initialView.series === null ? keys : initialView.series;
+      const initiallyVisible = initialView.series === null ? DEFAULT_HISTORY_SERIES : initialView.series;
       const controls = document.getElementById('series-controls');
       keys.forEach(key => {
         const config = SERIES[key];
@@ -1112,11 +1281,13 @@
       const chart = new Chart(document.getElementById('history'), {
         type:'line',
         data:{ labels:fullHistory.map(row => row.date), datasets },
+        plugins:[historyAnnotations],
         options:{
           responsive:true,
           maintainAspectRatio:false,
           interaction:{ mode:'index', intersect:false },
           animation:{ duration:260 },
+          layout:{ padding:{ right:window.innerWidth <= 640 ? 125 : 210 } },
           plugins:{
             legend:{ display:false },
             tooltip:{
@@ -1127,7 +1298,7 @@
               filter:item => !item.dataset.tooltipHidden,
               callbacks:{
                 label:context => `${context.dataset.label}: ${pct(context.parsed.y)}`,
-                afterBody:items => { document.getElementById('history-detail').textContent = `${items[0].label}: ${items.map(item => `${item.dataset.label} ${pct(item.parsed.y)}`).join(' · ')}`; }
+                afterBody:items => { document.getElementById('history-detail').textContent = `${formatQuarter(items[0].label)}: ${items.map(item => `${item.dataset.label} ${pct(item.parsed.y)}`).join(' · ')}`; }
               }
             }
           },
@@ -1220,15 +1391,15 @@
         const exportChart = new Chart(canvas, {
           type:'line',
           data:{ labels:[...chart.data.labels], datasets:exportDatasets },
-          plugins:[backgroundPlugin],
+          plugins:[backgroundPlugin, historyAnnotations],
           options:{
             responsive:false,
             animation:false,
             devicePixelRatio:1,
-            layout:{ padding:{ top:28, right:44, bottom:28, left:30 } },
+            layout:{ padding:{ top:28, right:260, bottom:28, left:30 } },
             plugins:{
               title:{ display:true, text:'AIER Historical Monetary-Policy Signal', align:'start', color:COLORS.brand, font:{ family:'Financier Display, Georgia, serif', size:36, weight:'normal' }, padding:{ bottom:18 } },
-              legend:{ display:true, position:'bottom', labels:{ color:COLORS.black, font:{ family:'Figure, Segoe UI, sans-serif', size:22 }, padding:28, usePointStyle:true, filter:item => !exportDatasets[item.datasetIndex].legendHidden } },
+              legend:{ display:false },
               tooltip:{ enabled:false }
             },
             scales:{
@@ -1245,7 +1416,7 @@
 
       document.getElementById('export-svg').addEventListener('click', () => {
         const width = 1600, height = 900;
-        const margin = { left:120, right:55, top:105, bottom:155 };
+        const margin = { left:120, right:260, top:105, bottom:155 };
         const plotWidth = width - margin.left - margin.right;
         const plotHeight = height - margin.top - margin.bottom;
         const labels = [...chart.data.labels];
@@ -1274,7 +1445,7 @@
         const svg = [
           `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">`,
           '<title id="title">AIER Historical Monetary-Policy Signal</title>',
-          `<desc id="desc">Historical monetary-rule prescriptions and the effective federal funds rate from ${escapeXml(labels[0] || '')} through ${escapeXml(labels.at(-1) || '')}.</desc>`,
+          `<desc id="desc">Historical monetary-rule benchmarks and the actual effective federal funds rate from ${escapeXml(labels[0] || '')} through ${escapeXml(labels.at(-1) || '')}.</desc>`,
           '<rect width="100%" height="100%" fill="#FFFFFF"/>',
           '<text x="120" y="54" fill="#083E00" font-family="Financier Display, Georgia, Times New Roman, serif" font-size="38">AIER Historical Monetary-Policy Signal</text>',
           `<text x="120" y="82" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(labels[0] || '')} to ${escapeXml(labels.at(-1) || '')}</text>`,
@@ -1282,6 +1453,7 @@
           `<line x1="${margin.left}" x2="${width-margin.right}" y1="${margin.top+plotHeight}" y2="${margin.top+plotHeight}" stroke="#797D82" stroke-width="1"/>`,
           ...xTickIndexes.map(index => `<text x="${x(index).toFixed(1)}" y="${margin.top+plotHeight+34}" text-anchor="middle" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="17">${escapeXml(formatHistoryTick(labels[index]))}</text>`),
           ...visibleLines.map(dataset => `<path d="${linePath(dataset.data)}" fill="none" stroke="${dataset.borderColor}" stroke-width="${Math.max(3, dataset.borderWidth)}"${dataset.borderDash?.length ? ` stroke-dasharray="${dataset.borderDash.join(' ')}"` : ''} stroke-linejoin="round" stroke-linecap="round"/>`),
+          ...visibleLines.map(dataset => Number.isFinite(Number(dataset.data.at(-1))) ? `<text x="${(x(labels.length-1)+14).toFixed(1)}" y="${(y(Number(dataset.data.at(-1)))+6).toFixed(1)}" fill="${dataset.borderColor}" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">${escapeXml(SERIES[dataset.key].endLabel)}</text>` : ''),
           ...visibleLines.map(dataset => selectedIndex >= 0 && Number.isFinite(Number(dataset.data[selectedIndex])) ? `<circle cx="${x(selectedIndex).toFixed(1)}" cy="${y(Number(dataset.data[selectedIndex])).toFixed(1)}" r="6" fill="#FFFFFF" stroke="${dataset.borderColor}" stroke-width="3"/>` : ''),
           '<text x="34" y="430" transform="rotate(-90 34 430)" text-anchor="middle" fill="#797D82" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18">Percent</text>',
           ...legendEntries.map((entry, index) => { const legendX = margin.left + (index % 3) * 390; const legendY = 828 + Math.floor(index / 3) * 34; return `<line x1="${legendX}" x2="${legendX+42}" y1="${legendY-5}" y2="${legendY-5}" stroke="${entry.color}" stroke-width="4"${entry.dash ? ` stroke-dasharray="${entry.dash}"` : ''}/><text x="${legendX+54}" y="${legendY}" fill="#171717" font-family="Figure, Segoe UI, Arial, sans-serif" font-size="18">${escapeXml(entry.label)}</text>`; }),
@@ -1294,8 +1466,11 @@
         if (!activeRows.some(row => row.date === selectedDate)) setHistoricalRange('all', false);
         const selected = fullHistory.find(row => row.date === selectedDate);
         if (selected) {
-          const details = Object.keys(SERIES).map(key => `${SERIES[key].label} ${pct(selected[key])}`).join(' \u00b7 ');
-          document.getElementById('history-detail').textContent = `Selected ${formatQuarter(selectedDate)} quarterly observation (${formatObservationDate(selectedDate)} source row): ${details}`;
+          const details = Object.keys(SERIES).filter(key => {
+            const index = chart.data.datasets.findIndex(dataset => dataset.key === key);
+            return chart.isDatasetVisible(index);
+          }).map(key => `${SERIES[key].label} ${pct(selected[key])}`).join(' \u00b7 ');
+          document.getElementById('history-detail').textContent = `Selected ${formatQuarter(selectedDate)}: ${details}`;
         }
         chart.update();
         if (notify) notifyStateChange();
@@ -1309,17 +1484,6 @@
     ])
       .then(([data, archiveManifest]) => {
         data.target_range = data.target_range || [3.5, 3.75];
-        const values = Object.values(data.rules);
-        const [targetLow, targetHigh] = data.target_range;
-        const aboveCount = values.filter(value => value > targetHigh).length;
-        const allAbove = aboveCount === values.length;
-        document.getElementById('headline').textContent = allAbove ? `All ${values.length} rules prescribe a policy rate above the current target range` : `${aboveCount} of ${values.length} rules prescribe a policy rate above the current target range`;
-        document.getElementById('hero-deck').textContent = `The latest prescriptions span ${pct(data.range[0])} to ${pct(data.range[1])}, with a median of ${pct(data.median)}, compared with a current effective federal funds rate of ${pct(data.effr)}.`;
-        document.getElementById('range').textContent = `${pct(data.range[0])}–${pct(data.range[1])}`;
-        document.getElementById('median').textContent = pct(data.median);
-        document.getElementById('ffr').textContent = pct(data.effr);
-        document.getElementById('target-range').textContent = `${pct(targetLow)}–${pct(targetHigh)}`;
-        document.getElementById('median-gap').textContent = gap(data.median-data.effr);
         const reportLinks = document.getElementById('report-links');
         const reports = data.reports || {};
         const reportDefinitions = [
@@ -1343,10 +1507,7 @@
         const releases = Array.isArray(archiveManifest?.releases) ? archiveManifest.releases : [];
         const currentRelease = releases.at(-1) || null;
         const releaseLabel = currentRelease ? formatReleaseId(currentRelease.release_id) : 'Current';
-        const releaseDetail = currentRelease?.data_cutoff
-          ? `${releaseLabel} dashboard release · Data through ${formatObservationDate(currentRelease.data_cutoff)}`
-          : `${releaseLabel} dashboard release · Updated ${generated}`;
-        document.getElementById('release-stamp').textContent = releaseDetail;
+        document.getElementById('technical-metadata').textContent = `${releaseLabel} dashboard release. Generated ${generated}.${currentRelease?.data_cutoff ? ` Release cutoff ${formatObservationDate(currentRelease.data_cutoff)}.` : ''}`;
         const normalizeSnapshot = snapshot => {
           const rules = snapshot.rules || data.rules;
           const values = RULES.map(rule => Number(rules[rule.key])).filter(Number.isFinite).sort((a,b) => a-b);
@@ -1377,36 +1538,64 @@
         const latestTaylorVintage = String(data.taylor_vintage || latestSnapshot.date).slice(0,10);
         const latestNgdpVintage = String(data.ngdp_vintage || latestSnapshot.date).slice(0,10);
         const decompositionSelector = document.getElementById('decomposition-rule');
-        decompositionSelector.innerHTML = RULES.map(rule => `<option value="${rule.key}">${ruleLabel(rule)} \u00b7 ${rule.source} r*</option>`).join('');
         let activeDecompositionSnapshot = latestSnapshot;
         let activeDecompositionPrevious = snapshots.at(-2) || null;
+        let activeIsLatest = true;
+        const populateDecompositionSelector = () => {
+          const priorSelection = decompositionSelector.value;
+          const rules = visibleRules();
+          decompositionSelector.innerHTML = rules.map(rule => `<option value="${rule.key}">${ruleLabel(rule)} · ${neutralRateLabel(rule)}</option>`).join('');
+          decompositionSelector.value = rules.some(rule => rule.key === priorSelection) ? priorSelection : rules[0].key;
+        };
+        populateDecompositionSelector();
         decompositionSelector.addEventListener('change', () => renderChangeDecomposition(activeDecompositionSnapshot, activeDecompositionPrevious));
+
+        const recentSnapshots = snapshots.slice(-4);
+        const recentAverageGap = recentSnapshots.reduce((sum, snapshot) => {
+          const sepValues = RULES.filter(rule => rule.source === 'SEP').map(rule => Number(snapshot.rules[rule.key])).sort((a,b) => a-b);
+          const median = (sepValues[2]+sepValues[3])/2;
+          return sum + median-Number(snapshot.effr);
+        }, 0) / Math.max(1, recentSnapshots.length);
+        const recentRelationship = recentAverageGap >= 0 ? 'below' : 'above';
+        document.getElementById('history-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> Across the four most recent quarterly observations, the actual effective federal funds rate averaged ${Math.abs(recentAverageGap).toFixed(1)} percentage points ${recentRelationship} the median of the six default rule benchmarks.`;
 
         const renderSourceVintageNotes = (snapshot, isLatest) => {
           const snapshotVintage = String(snapshot.date).slice(0,10);
           const taylorVintage = isLatest ? latestTaylorVintage : snapshotVintage;
           const ngdpVintage = isLatest ? latestNgdpVintage : snapshotVintage;
-          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)}); NGDP-rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). The target range and effective FFR are stored with the selected quarterly observation.`;
+          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)}); nominal GDP rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). The target range and actual effective federal funds rate are stored with the selected quarterly observation.`;
         };
 
         const renderCurrentVintage = (snapshot, previous, isLatest, syncUrl = true) => {
           currentVintageDate = String(snapshot.date).slice(0,10);
           activeDecompositionSnapshot = snapshot;
           activeDecompositionPrevious = previous;
-          const currentValues = RULES.map(rule => snapshot.rules[rule.key]).filter(Number.isFinite);
+          activeIsLatest = isLatest;
+          const currentValues = visibleRules().map(rule => Number(snapshot.rules[rule.key])).filter(Number.isFinite).sort((a,b) => a-b);
+          const midpoint = Math.floor(currentValues.length/2);
+          const currentMedian = currentValues.length % 2 ? currentValues[midpoint] : (currentValues[midpoint-1]+currentValues[midpoint])/2;
+          const currentRange = [currentValues[0], currentValues.at(-1)];
           const [snapshotTargetLow, snapshotTargetHigh] = snapshot.target_range;
           const snapshotAboveCount = currentValues.filter(value => value > snapshotTargetHigh).length;
           const snapshotAllAbove = snapshotAboveCount === currentValues.length;
-          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${currentValues.length} rules prescribe a policy rate above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rules prescribe a policy rate above the ${isLatest ? 'current' : 'selected'} target range`;
-          document.getElementById('hero-deck').textContent = isLatest
-            ? `The latest prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with a current effective federal funds rate of ${pct(snapshot.effr)}.`
-            : `At the ${formatQuarter(snapshot.date)} data vintage (${formatObservationDate(snapshot.date)} source row), prescriptions span ${pct(snapshot.range[0])} to ${pct(snapshot.range[1])}, with a median of ${pct(snapshot.median)}, compared with an effective federal funds rate of ${pct(snapshot.effr)}.`;
-          document.getElementById('range').textContent = `${pct(snapshot.range[0])}\u2013${pct(snapshot.range[1])}`;
-          document.getElementById('median').textContent = pct(snapshot.median);
-          document.getElementById('ffr').textContent = pct(snapshot.effr);
-          document.getElementById('target-range').textContent = `${pct(snapshotTargetLow)}\u2013${pct(snapshotTargetHigh)}`;
-          document.getElementById('median-gap').textContent = gap(snapshot.median-snapshot.effr);
-          document.getElementById('observation-stamp').textContent = `Quarterly observation ${formatQuarter(snapshot.date)} · ${formatObservationDate(snapshot.date)} source row · Built ${generated}`;
+          const scopeLabel = showAlternateEstimates ? `${currentValues.length} rule benchmarks` : 'six default rule benchmarks';
+          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${scopeLabel} point above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rule benchmarks point above the ${isLatest ? 'current' : 'selected'} target range`;
+          document.getElementById('hero-verdict').textContent = `The median rule points to a policy rate about ${Math.abs(currentMedian-snapshot.effr).toFixed(1)} percentage points ${currentMedian >= snapshot.effr ? 'above' : 'below'} today’s actual rate.`;
+          document.getElementById('range').textContent = `${overviewPct(currentRange[0])}\u2013${overviewPct(currentRange[1])}`;
+          document.getElementById('median').textContent = overviewPct(currentMedian);
+          document.getElementById('ffr').textContent = overviewPct(snapshot.effr);
+          document.getElementById('target-range').textContent = `${targetRangePct(snapshotTargetLow)}\u2013${targetRangePct(snapshotTargetHigh)}`;
+          document.getElementById('median-gap').textContent = overviewGap(currentMedian-snapshot.effr);
+          const primaryDate = isLatest && currentRelease?.data_cutoff ? formatObservationDate(currentRelease.data_cutoff) : formatObservationDate(snapshot.date);
+          document.getElementById('release-stamp').textContent = isLatest && currentRelease?.data_cutoff
+            ? `Results for ${formatQuarter(snapshot.date)} · Data updated through ${primaryDate}`
+            : `Results for ${formatQuarter(snapshot.date)} · Snapshot dated ${primaryDate}`;
+          document.getElementById('observation-stamp').textContent = '';
+          document.getElementById('vintage-summary').textContent = isLatest && currentRelease?.data_cutoff
+            ? `Data as of ${primaryDate}. Use the menu to view earlier snapshots.`
+            : `Snapshot for ${formatQuarter(snapshot.date)}, dated ${primaryDate}. Use the menu to choose another snapshot.`;
+          const stance = snapshotAllAbove ? `All ${currentValues.length} visible benchmarks are above the Federal Reserve target range` : `${snapshotAboveCount} of ${currentValues.length} visible benchmarks are above the Federal Reserve target range`;
+          document.getElementById('current-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> ${stance}; their median is ${Math.abs(currentMedian-snapshot.effr).toFixed(1)} percentage points ${currentMedian >= snapshot.effr ? 'above' : 'below'} the actual rate, indicating a ${currentMedian >= snapshot.effr ? 'tighter' : 'easier'} benchmark stance.`;
           document.getElementById('footer-vintage').textContent = `${releaseLabel} dashboard release · ${formatQuarter(snapshot.date)} observation`;
           renderSourceVintageNotes(snapshot, isLatest);
           historyView.selectVintage(snapshot.date, syncUrl);
@@ -1422,8 +1611,8 @@
           vintageSelector.innerHTML = snapshots.map((snapshot, index) => {
             const isLatest = index === snapshots.length - 1;
             const label = isLatest && currentRelease
-              ? `${releaseLabel} FOMC cycle · Updated through ${formatObservationDate(currentRelease.data_cutoff)} (latest)`
-              : `${formatObservationDate(snapshot.date)} · ${formatQuarter(snapshot.date)} source vintage`;
+              ? `Data as of ${formatObservationDate(currentRelease.data_cutoff)} (latest)`
+              : `${formatQuarter(snapshot.date)} · Snapshot dated ${formatObservationDate(snapshot.date)}`;
             return `<option value="${index}"${index === initialSnapshotIndex ? ' selected' : ''}>${label}</option>`;
           }).join('');
           vintageSelector.addEventListener('change', () => {
@@ -1431,6 +1620,18 @@
             renderCurrentVintage(snapshots[index], snapshots[index-1] || null, index === snapshots.length-1);
           });
         }
+
+        const alternateButtons = [document.getElementById('alternate-toggle-chart'), document.getElementById('alternate-toggle-table')];
+        const setAlternateEstimates = show => {
+          showAlternateEstimates = show;
+          alternateButtons.forEach(button => {
+            button.setAttribute('aria-pressed', String(show));
+            button.textContent = show ? 'Hide alternate neutral-rate estimates' : 'Show alternate neutral-rate estimates';
+          });
+          populateDecompositionSelector();
+          renderCurrentVintage(activeDecompositionSnapshot, activeDecompositionPrevious, activeIsLatest, false);
+        };
+        alternateButtons.forEach(button => button.addEventListener('click', () => setAlternateEstimates(!showAlternateEstimates)));
 
         const copyLink = document.getElementById('copy-link');
         const shareStatus = document.getElementById('share-status');
@@ -1463,7 +1664,7 @@
       .catch(error => {
         document.getElementById('release-stamp').textContent = `Dashboard error: ${error.message}`;
         document.getElementById('observation-stamp').textContent = '';
-        document.getElementById('hero-deck').textContent = 'The dashboard data could not be loaded. Please refresh or check the local data file.';
+        document.getElementById('hero-verdict').textContent = 'The dashboard data could not be loaded. Please refresh or check the local data file.';
       });
   </script>
 </body>
