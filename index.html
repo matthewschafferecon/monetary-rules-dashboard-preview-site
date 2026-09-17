@@ -1580,7 +1580,7 @@
           const snapshotAboveCount = currentValues.filter(value => value > snapshotTargetHigh).length;
           const snapshotAllAbove = snapshotAboveCount === currentValues.length;
           const scopeLabel = showAlternateEstimates ? `${currentValues.length} rule benchmarks` : 'six featured rule benchmarks';
-          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${scopeLabel} point above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of ${currentValues.length} rule benchmarks point above the ${isLatest ? 'current' : 'selected'} target range`;
+          document.getElementById('headline').textContent = snapshotAllAbove ? `All ${scopeLabel} point above the ${isLatest ? 'current' : 'selected'} target range` : `${snapshotAboveCount} of the ${scopeLabel} point above the ${isLatest ? 'current' : 'selected'} target range`;
           document.getElementById('hero-verdict').textContent = `The median rule points to a policy rate about ${Math.abs(currentMedian-snapshot.effr).toFixed(1)} percentage points ${currentMedian >= snapshot.effr ? 'above' : 'below'} today’s actual rate.`;
           document.getElementById('range').textContent = `${overviewPct(currentRange[0])}\u2013${overviewPct(currentRange[1])}`;
           document.getElementById('median').textContent = overviewPct(currentMedian);
