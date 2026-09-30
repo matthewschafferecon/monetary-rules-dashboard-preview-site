@@ -208,6 +208,13 @@
       font-size: 2rem;
     }
 
+    .hero-stat-note {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255,255,255,.72);
+      font-size: .76rem;
+    }
+
     .accent-rule {
       height: 4px;
       background: var(--aier-gold);
@@ -756,7 +763,7 @@
       <div class="hero-stats" aria-label="Current summary">
         <div class="hero-stat"><span class="hero-stat-label">Benchmark range</span><span class="hero-stat-value" id="range">—</span></div>
         <div class="hero-stat"><span class="hero-stat-label">Median benchmark</span><span class="hero-stat-value" id="median">—</span></div>
-        <div class="hero-stat"><span class="hero-stat-label">Current effective federal funds rate</span><span class="hero-stat-value" id="ffr">—</span></div>
+        <div class="hero-stat"><span class="hero-stat-label">Current effective federal funds rate</span><span class="hero-stat-value" id="ffr">—</span><span class="hero-stat-note" id="ffr-date"></span></div>
       </div>
     </div>
     <div class="accent-rule" aria-hidden="true"></div>
@@ -1480,9 +1487,10 @@
 
     Promise.all([
       fetch('data/results.json').then(response => { if (!response.ok) throw new Error('dashboard data unavailable'); return response.json(); }),
-      fetch('data/archive/manifest.json').then(response => response.ok ? response.json() : null).catch(() => null)
+      fetch('data/archive/manifest.json').then(response => response.ok ? response.json() : null).catch(() => null),
+      fetch('data/live-rates.json', { cache:'no-store' }).then(response => response.ok ? response.json() : null).catch(() => null)
     ])
-      .then(([data, archiveManifest]) => {
+      .then(([data, archiveManifest, liveRates]) => {
         data.target_range = data.target_range || [3.5, 3.75];
         const reportLinks = document.getElementById('report-links');
         const reports = data.reports || {};
@@ -1560,11 +1568,23 @@
         const recentRelationship = recentAverageGap >= 0 ? 'below' : 'above';
         document.getElementById('history-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> Across the four most recent quarterly observations, the actual effective federal funds rate averaged ${Math.abs(recentAverageGap).toFixed(1)} percentage points ${recentRelationship} the median of the six featured rule benchmarks.`;
 
+        // The EFFR and target range are display context, not rule inputs. A scheduled job
+        // refreshes them from the New York Fed between rule releases; use that observation
+        // unless the release itself carries a newer one.
+        const releaseEffrDate = String(currentRelease?.effective_ffr_date || '');
+        const liveRatesValid = liveRates && Number.isFinite(Number(liveRates.effr)) && /^\d{4}-\d{2}-\d{2}$/.test(String(liveRates.effr_date))
+          && Array.isArray(liveRates.target_range) && liveRates.target_range.length === 2 && liveRates.target_range.every(value => Number.isFinite(Number(value)));
+        const effrAsOf = liveRatesValid && String(liveRates.effr_date) >= releaseEffrDate ? String(liveRates.effr_date) : releaseEffrDate;
+        if (liveRatesValid && String(liveRates.effr_date) >= releaseEffrDate) {
+          latestSnapshot.effr = Number(liveRates.effr);
+          latestSnapshot.target_range = liveRates.target_range.map(Number);
+        }
+
         const renderSourceVintageNotes = (snapshot, isLatest) => {
           const snapshotVintage = String(snapshot.date).slice(0,10);
           const taylorVintage = isLatest ? latestTaylorVintage : snapshotVintage;
           const ngdpVintage = isLatest ? latestNgdpVintage : snapshotVintage;
-          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)}); nominal GDP rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). The target range and actual effective federal funds rate are stored with the selected quarterly observation.`;
+          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)}); nominal GDP rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). ${isLatest && effrAsOf ? `The target range and actual effective federal funds rate are the New York Fed observation for ${formatObservationDate(effrAsOf)}.` : 'The target range and actual effective federal funds rate are stored with the selected quarterly observation.'}`;
         };
 
         const renderCurrentVintage = (snapshot, previous, isLatest, syncUrl = true) => {
@@ -1584,7 +1604,8 @@
           document.getElementById('hero-verdict').textContent = `The median rule points to a policy rate about ${Math.abs(currentMedian-snapshot.effr).toFixed(1)} percentage points ${currentMedian >= snapshot.effr ? 'above' : 'below'} today’s actual rate.`;
           document.getElementById('range').textContent = `${overviewPct(currentRange[0])}\u2013${overviewPct(currentRange[1])}`;
           document.getElementById('median').textContent = overviewPct(currentMedian);
-          document.getElementById('ffr').textContent = overviewPct(snapshot.effr);
+          document.getElementById('ffr').textContent = pct(snapshot.effr);
+          document.getElementById('ffr-date').textContent = isLatest && effrAsOf ? `As of ${formatObservationDate(effrAsOf)} · New York Fed` : `${formatQuarter(snapshot.date)} observation`;
           document.getElementById('target-range').textContent = `${targetRangePct(snapshotTargetLow)}\u2013${targetRangePct(snapshotTargetHigh)}`;
           document.getElementById('median-gap').textContent = overviewGap(currentMedian-snapshot.effr);
           const primaryDate = isLatest && currentRelease?.data_cutoff ? formatObservationDate(currentRelease.data_cutoff) : formatObservationDate(snapshot.date);
