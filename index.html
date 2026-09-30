@@ -208,13 +208,6 @@
       font-size: 2rem;
     }
 
-    .hero-stat-note {
-      display: block;
-      margin-top: 4px;
-      color: rgba(255,255,255,.72);
-      font-size: .76rem;
-    }
-
     .accent-rule {
       height: 4px;
       background: var(--aier-gold);
@@ -763,7 +756,7 @@
       <div class="hero-stats" aria-label="Current summary">
         <div class="hero-stat"><span class="hero-stat-label">Benchmark range</span><span class="hero-stat-value" id="range">—</span></div>
         <div class="hero-stat"><span class="hero-stat-label">Median benchmark</span><span class="hero-stat-value" id="median">—</span></div>
-        <div class="hero-stat"><span class="hero-stat-label">Current effective federal funds rate</span><span class="hero-stat-value" id="ffr">—</span><span class="hero-stat-note" id="ffr-date"></span></div>
+        <div class="hero-stat"><span class="hero-stat-label">Current effective federal funds rate</span><span class="hero-stat-value" id="ffr">—</span></div>
       </div>
     </div>
     <div class="accent-rule" aria-hidden="true"></div>
@@ -1605,7 +1598,6 @@
           document.getElementById('range').textContent = `${overviewPct(currentRange[0])}\u2013${overviewPct(currentRange[1])}`;
           document.getElementById('median').textContent = overviewPct(currentMedian);
           document.getElementById('ffr').textContent = pct(snapshot.effr);
-          document.getElementById('ffr-date').textContent = isLatest && effrAsOf ? `As of ${formatObservationDate(effrAsOf)} · New York Fed` : `${formatQuarter(snapshot.date)} observation`;
           document.getElementById('target-range').textContent = `${targetRangePct(snapshotTargetLow)}\u2013${targetRangePct(snapshotTargetHigh)}`;
           document.getElementById('median-gap').textContent = overviewGap(currentMedian-snapshot.effr);
           const primaryDate = isLatest && currentRelease?.data_cutoff ? formatObservationDate(currentRelease.data_cutoff) : formatObservationDate(snapshot.date);
