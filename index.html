@@ -271,6 +271,59 @@
       text-transform: none;
     }
 
+    .estimate-view-controls {
+      display: grid;
+      justify-items: end;
+      gap: 9px;
+    }
+
+    .estimate-view-toggle {
+      display: inline-flex;
+      padding: 3px;
+      background: var(--soft-grey);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+    }
+
+    .estimate-view-toggle button {
+      padding: 8px 11px;
+      background: transparent;
+      color: var(--muted);
+      border: 0;
+      border-radius: 1px;
+      font: inherit;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .estimate-view-toggle button[aria-pressed="true"] {
+      background: var(--white);
+      color: var(--aier-green);
+      box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    }
+
+    .estimate-status {
+      justify-self: end;
+      padding: 3px 7px;
+      background: color-mix(in srgb, var(--aier-gold) 7%, var(--white));
+      color: #756744;
+      border: 1px solid color-mix(in srgb, var(--aier-gold) 25%, var(--line));
+      border-radius: 999px;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .vintage-control[hidden] { display: none; }
+
+    .estimate-status.is-benchmark {
+      background: var(--soft-grey);
+      color: var(--muted);
+      border-color: var(--line);
+    }
+
     .current-grid {
       display: grid;
       grid-template-columns: minmax(0, 2.7fr) minmax(230px, 1fr);
@@ -725,6 +778,10 @@
       .controls { align-items: flex-start; flex-direction: column; }
       .export-controls { margin-left: 0; }
       .vintage-control { width: 100%; }
+      .estimate-view-controls { width: 100%; justify-items: stretch; }
+      .estimate-view-toggle { width: 100%; }
+      .estimate-view-toggle button { flex: 1; }
+      .estimate-status { justify-self: start; }
       .chart-wrap { height: 340px; }
       .contribution-row { grid-template-columns: 1fr 68px; gap: 6px 10px; }
       .contribution-label { grid-column: 1 / -1; }
@@ -765,11 +822,18 @@
   <main>
     <section class="section-block" aria-labelledby="current-heading">
       <div class="section-heading">
-        <div><h2 id="current-heading">What do the rules say now?</h2><p id="vintage-summary">Loading the latest data date. Use the menu to view earlier snapshots.</p></div>
-        <label class="vintage-control" id="vintage-control" hidden>View snapshot
-          <select id="vintage-selector" aria-describedby="vintage-description"></select>
-          <span class="sr-only" id="vintage-description">Choose an earlier snapshot to view its benchmarks and changes from the preceding available observation.</span>
-        </label>
+        <div><h2 id="current-heading">What do the rules say now?</h2><p id="vintage-summary">Loading the latest data date.</p></div>
+        <div class="estimate-view-controls">
+          <div class="estimate-view-toggle" role="group" aria-label="Estimate view">
+            <button id="latest-estimate-toggle" type="button" aria-pressed="true">Latest estimate</button>
+            <button id="published-benchmarks-toggle" type="button" aria-pressed="false">Published benchmarks</button>
+          </div>
+          <span class="estimate-status is-benchmark" id="estimate-status">Loading</span>
+          <label class="vintage-control" id="vintage-control" hidden>Select benchmark
+            <select id="vintage-selector" aria-describedby="vintage-description"></select>
+            <span class="sr-only" id="vintage-description">Choose a published quarterly benchmark to view its estimates and changes from the preceding available benchmark.</span>
+          </label>
+        </div>
       </div>
       <div class="rate-key" aria-label="Key to the three rate concepts">
         <span class="rate-key-item"><span class="rate-key-line" aria-hidden="true"></span><strong>Actual effective federal funds rate</strong>&nbsp;=&nbsp;the overnight rate that prevails</span>
@@ -884,6 +948,7 @@
               <h3>Dates and neutral-rate alternatives</h3>
               <p id="technical-metadata">Loading release and build details&hellip;</p>
               <p id="source-vintage-notes">Loading source details&hellip;</p>
+              <p><strong>Latest estimate and published benchmarks.</strong> The latest estimate is provisional when newer original-source observations are available and is recalculated using the dashboard&rsquo;s documented quarterly averaging procedure. Its &ldquo;Data as of&rdquo; date reflects the freshest verified current information displayed, normally the latest available effective federal funds rate observation; it does not imply that every rule input changed that day. Published benchmarks are frozen quarterly vintages used for reports, citations, downloadable workbooks, and reproducible historical comparisons. Until a newer provisional estimate is available, the latest estimate and most recent published benchmark are the same.</p>
               <p>Featured rows use the Federal Reserve&rsquo;s own longer-run neutral-rate estimate from the Summary of Economic Projections. Alternate rows substitute the New York Fed model estimate. Historical values are organized by quarterly observation date; immutable releases preserve their separate as-of versions.</p>
             </div>
           </div>
@@ -945,6 +1010,10 @@
       const parameters = new URLSearchParams(window.location.search);
       const period = SHARE_PERIODS.has(parameters.get('period')) ? parameters.get('period') : '5';
       const vintage = /^\d{4}-\d{2}-\d{2}$/.test(parameters.get('vintage') || '') ? parameters.get('vintage') : null;
+      const requestedMode = parameters.get('mode');
+      const mode = requestedMode === 'latest' || requestedMode === 'benchmark'
+        ? requestedMode
+        : (vintage ? 'benchmark' : 'latest');
       const seriesParameter = parameters.get('series');
       const validSeries = seriesParameter === null
         ? []
@@ -953,14 +1022,16 @@
         ? null
         : seriesParameter === '' || validSeries.length ? validSeries : null;
       return {
+        mode,
         vintage,
         period,
         series:requestedSeries,
-        hasParameters:['vintage', 'period', 'series'].some(key => parameters.has(key))
+        hasParameters:['mode', 'vintage', 'period', 'series'].some(key => parameters.has(key))
       };
     };
     const writeSharedView = view => {
       const url = new URL(window.location.href);
+      url.searchParams.set('mode', view.mode);
       url.searchParams.set('vintage', view.vintage);
       url.searchParams.set('period', view.period);
       url.searchParams.set('series', view.series.join(','));
@@ -1483,7 +1554,7 @@
       fetch('data/archive/manifest.json').then(response => response.ok ? response.json() : null).catch(() => null),
       fetch('data/live-rates.json', { cache:'no-store' }).then(response => response.ok ? response.json() : null).catch(() => null)
     ])
-      .then(([data, archiveManifest, liveRates]) => {
+      .then(async ([data, archiveManifest, liveRates]) => {
         data.target_range = data.target_range || [3.5, 3.75];
         const reportLinks = document.getElementById('report-links');
         const reports = data.reports || {};
@@ -1507,6 +1578,10 @@
         const generated = data.generated_at ? new Date(data.generated_at).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }) : 'current run';
         const releases = Array.isArray(archiveManifest?.releases) ? archiveManifest.releases : [];
         const currentRelease = releases.at(-1) || null;
+        const currentReleaseArchive = currentRelease?.url
+          ? await fetch(`data/archive/${currentRelease.url}`).then(response => response.ok ? response.json() : null).catch(() => null)
+          : null;
+        const benchmarkSourceDate = currentReleaseArchive?.release?.source_dates?.atlanta_taylor_utility || null;
         const releaseLabel = currentRelease ? formatReleaseId(currentRelease.release_id) : 'Current';
         document.getElementById('technical-metadata').textContent = `${releaseLabel} dashboard release. Generated ${generated}.${currentRelease?.data_cutoff ? ` Release cutoff ${formatObservationDate(currentRelease.data_cutoff)}.` : ''}`;
         const normalizeSnapshot = snapshot => {
@@ -1529,12 +1604,16 @@
         snapshots = snapshots.filter(snapshot => snapshot.date && snapshot.rules).sort((a,b) => new Date(a.date) - new Date(b.date));
         if (!snapshots.length) snapshots = [fallbackSnapshot];
         const latestSnapshot = snapshots.at(-1);
+        const quarterlyBenchmarkSnapshot = normalizeSnapshot(JSON.parse(JSON.stringify(latestSnapshot)));
+        const provisionalSnapshot = data.provisional_snapshot?.rules ? normalizeSnapshot(data.provisional_snapshot) : null;
+        const latestEstimateSnapshot = provisionalSnapshot || latestSnapshot;
         const requestedSnapshotIndex = snapshots.findIndex(snapshot => String(snapshot.date).slice(0,10) === requestedSharedView.vintage);
         const initialSnapshotIndex = requestedSnapshotIndex >= 0 ? requestedSnapshotIndex : snapshots.length - 1;
-        const initialSnapshot = snapshots[initialSnapshotIndex];
+        const initialSnapshot = requestedSnapshotIndex >= 0 ? snapshots[initialSnapshotIndex] : latestEstimateSnapshot;
         let currentVintageDate = String(initialSnapshot.date).slice(0,10);
+        let currentEstimateMode = requestedSharedView.mode;
         let historyView;
-        const syncSharedView = () => writeSharedView({ vintage:currentVintageDate, ...historyView.getState() });
+        const syncSharedView = () => writeSharedView({ mode:currentEstimateMode, vintage:currentVintageDate, ...historyView.getState() });
         historyView = buildHistoryChart(data, requestedSharedView, syncSharedView);
         const latestTaylorVintage = String(data.taylor_vintage || latestSnapshot.date).slice(0,10);
         const latestNgdpVintage = String(data.ngdp_vintage || latestSnapshot.date).slice(0,10);
@@ -1568,16 +1647,25 @@
         const liveRatesValid = liveRates && Number.isFinite(Number(liveRates.effr)) && /^\d{4}-\d{2}-\d{2}$/.test(String(liveRates.effr_date))
           && Array.isArray(liveRates.target_range) && liveRates.target_range.length === 2 && liveRates.target_range.every(value => Number.isFinite(Number(value)));
         const effrAsOf = liveRatesValid && String(liveRates.effr_date) >= releaseEffrDate ? String(liveRates.effr_date) : releaseEffrDate;
+        const latestDashboardDate = [provisionalSnapshot?.data_cutoff, currentRelease?.data_cutoff, effrAsOf]
+          .map(value => String(value || '').slice(0,10))
+          .filter(value => /^\d{4}-\d{2}-\d{2}$/.test(value))
+          .sort()
+          .at(-1) || '';
         if (liveRatesValid && String(liveRates.effr_date) >= releaseEffrDate) {
-          latestSnapshot.effr = Number(liveRates.effr);
-          latestSnapshot.target_range = liveRates.target_range.map(Number);
+          latestEstimateSnapshot.effr = Number(liveRates.effr);
+          latestEstimateSnapshot.target_range = liveRates.target_range.map(Number);
         }
 
         const renderSourceVintageNotes = (snapshot, isLatest) => {
           const snapshotVintage = String(snapshot.date).slice(0,10);
           const taylorVintage = isLatest ? latestTaylorVintage : snapshotVintage;
           const ngdpVintage = isLatest ? latestNgdpVintage : snapshotVintage;
-          document.getElementById('source-vintage-notes').textContent = `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)}); nominal GDP rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). ${isLatest && effrAsOf ? `The target range and actual effective federal funds rate are the New York Fed observation for ${formatObservationDate(effrAsOf)}.` : 'The target range and actual effective federal funds rate are stored with the selected quarterly observation.'}`;
+          const isCurrentBenchmark = !isLatest && snapshotVintage === String(quarterlyBenchmarkSnapshot.date).slice(0,10) && benchmarkSourceDate;
+          const taylorSourceDescription = isCurrentBenchmark
+            ? `Taylor-rule inputs use the ${formatQuarter(taylorVintage)} row internally dated ${formatObservationDate(taylorVintage)} in the Atlanta Fed workbook published ${formatObservationDate(benchmarkSourceDate)}`
+            : `Taylor-rule inputs use the ${formatObservationDate(taylorVintage)} workbook row (${formatQuarter(taylorVintage)})`;
+          document.getElementById('source-vintage-notes').textContent = `${taylorSourceDescription}; nominal GDP rule inputs use the ${formatObservationDate(ngdpVintage)} workbook row (${formatQuarter(ngdpVintage)}). ${isLatest && effrAsOf ? `The target range and actual effective federal funds rate are the New York Fed observation for ${formatObservationDate(effrAsOf)}.` : 'The target range and actual effective federal funds rate are stored with the selected quarterly observation.'}`;
         };
 
         const renderCurrentVintage = (snapshot, previous, isLatest, syncUrl = true) => {
@@ -1600,14 +1688,18 @@
           document.getElementById('ffr').textContent = pct(snapshot.effr);
           document.getElementById('target-range').textContent = `${targetRangePct(snapshotTargetLow)}\u2013${targetRangePct(snapshotTargetHigh)}`;
           document.getElementById('median-gap').textContent = overviewGap(currentMedian-snapshot.effr);
-          const primaryDate = isLatest && currentRelease?.data_cutoff ? formatObservationDate(currentRelease.data_cutoff) : formatObservationDate(snapshot.date);
-          document.getElementById('release-stamp').textContent = isLatest && currentRelease?.data_cutoff
+          const primaryDate = isLatest && latestDashboardDate ? formatObservationDate(latestDashboardDate) : formatObservationDate(snapshot.date);
+          document.getElementById('release-stamp').textContent = isLatest && latestDashboardDate
             ? `Results for ${formatQuarter(snapshot.date)} · Data updated through ${primaryDate}`
             : `Results for ${formatQuarter(snapshot.date)} · Snapshot dated ${primaryDate}`;
           document.getElementById('observation-stamp').textContent = '';
-          document.getElementById('vintage-summary').textContent = isLatest && currentRelease?.data_cutoff
-            ? `Data as of ${primaryDate}. Use the menu to view earlier snapshots.`
+          document.getElementById('vintage-summary').textContent = isLatest && latestDashboardDate
+            ? `Data as of ${primaryDate}.`
             : `Snapshot for ${formatQuarter(snapshot.date)}, dated ${primaryDate}. Use the menu to choose another snapshot.`;
+          if (!isLatest && String(snapshot.date).slice(0,10) === String(quarterlyBenchmarkSnapshot.date).slice(0,10) && benchmarkSourceDate) {
+            document.getElementById('release-stamp').textContent = `${formatQuarter(snapshot.date)} published benchmark · As of ${formatObservationDate(benchmarkSourceDate)}`;
+            document.getElementById('vintage-summary').textContent = `${formatQuarter(snapshot.date)} published benchmark as of ${formatObservationDate(benchmarkSourceDate)}.`;
+          }
           const stance = snapshotAllAbove ? `All ${currentValues.length} visible benchmarks are above the Federal Reserve target range` : `${snapshotAboveCount} of ${currentValues.length} visible benchmarks are above the Federal Reserve target range`;
           document.getElementById('current-takeaway').innerHTML = `<strong>Descriptive takeaway:</strong> ${stance}; their median is ${Math.abs(currentMedian-snapshot.effr).toFixed(1)} percentage points ${currentMedian >= snapshot.effr ? 'above' : 'below'} the actual rate, indicating a ${currentMedian >= snapshot.effr ? 'tighter' : 'easier'} benchmark stance.`;
           document.getElementById('footer-vintage').textContent = `${releaseLabel} dashboard release · ${formatQuarter(snapshot.date)} observation`;
@@ -1618,22 +1710,56 @@
           renderChangeDecomposition(snapshot, previous);
         };
 
+        const latestEstimateToggle = document.getElementById('latest-estimate-toggle');
+        const publishedBenchmarksToggle = document.getElementById('published-benchmarks-toggle');
+        const estimateStatus = document.getElementById('estimate-status');
+        const setEstimateMode = mode => {
+          const latestMode = mode === 'latest';
+          currentEstimateMode = mode;
+          updateBenchmarkOptions(snapshots.length - 1);
+          vintageControl.hidden = latestMode;
+          latestEstimateToggle.setAttribute('aria-pressed', String(latestMode));
+          publishedBenchmarksToggle.setAttribute('aria-pressed', String(!latestMode));
+          estimateStatus.classList.toggle('is-benchmark', !latestMode || !provisionalSnapshot);
+          estimateStatus.textContent = latestMode
+            ? (provisionalSnapshot ? 'Provisional' : 'Current benchmark')
+            : 'Published';
+          if (latestMode) {
+            renderCurrentVintage(latestEstimateSnapshot, provisionalSnapshot ? quarterlyBenchmarkSnapshot : snapshots.at(-2) || null, true);
+          } else {
+            vintageSelector.value = String(snapshots.length - 1);
+            renderCurrentVintage(quarterlyBenchmarkSnapshot, snapshots.at(-2) || null, false);
+          }
+        };
+
         const vintageControl = document.getElementById('vintage-control');
         const vintageSelector = document.getElementById('vintage-selector');
-        if (snapshots.length > 1) {
-          vintageControl.hidden = false;
+        const updateBenchmarkOptions = selectedIndex => {
           vintageSelector.innerHTML = snapshots.map((snapshot, index) => {
             const isLatest = index === snapshots.length - 1;
-            const label = isLatest && currentRelease
-              ? `Data as of ${formatObservationDate(currentRelease.data_cutoff)} (latest)`
-              : `${formatQuarter(snapshot.date)} · Snapshot dated ${formatObservationDate(snapshot.date)}`;
-            return `<option value="${index}"${index === initialSnapshotIndex ? ' selected' : ''}>${label}</option>`;
+            const label = isLatest
+              ? `${formatQuarter(snapshot.date)} Benchmark`
+              : `${formatQuarter(snapshot.date)} · Benchmark dated ${formatObservationDate(snapshot.date)}`;
+            return `<option value="${index}"${index === selectedIndex ? ' selected' : ''}>${label}</option>`;
           }).join('');
+        };
+        if (snapshots.length > 1) {
+          updateBenchmarkOptions(initialSnapshotIndex);
           vintageSelector.addEventListener('change', () => {
             const index = Number(vintageSelector.value);
-            renderCurrentVintage(snapshots[index], snapshots[index-1] || null, index === snapshots.length-1);
+            currentEstimateMode = 'benchmark';
+            updateBenchmarkOptions(index);
+            latestEstimateToggle.setAttribute('aria-pressed', 'false');
+            publishedBenchmarksToggle.setAttribute('aria-pressed', 'true');
+            estimateStatus.classList.add('is-benchmark');
+            estimateStatus.textContent = index === snapshots.length - 1 ? 'Published' : 'Archived';
+            const selectedSnapshot = index === snapshots.length - 1 ? quarterlyBenchmarkSnapshot : snapshots[index];
+            renderCurrentVintage(selectedSnapshot, snapshots[index-1] || null, false);
           });
         }
+
+        latestEstimateToggle.addEventListener('click', () => setEstimateMode('latest'));
+        publishedBenchmarksToggle.addEventListener('click', () => setEstimateMode('benchmark'));
 
         const alternateButtons = [document.getElementById('alternate-toggle-chart'), document.getElementById('alternate-toggle-table')];
         const setAlternateEstimates = show => {
@@ -1672,7 +1798,18 @@
           window.setTimeout(() => { shareStatus.textContent = ''; }, 2400);
         });
 
-        renderCurrentVintage(initialSnapshot, snapshots[initialSnapshotIndex-1] || null, initialSnapshotIndex === snapshots.length-1, false);
+        if (requestedSnapshotIndex >= 0 && requestedSharedView.mode === 'benchmark') {
+          currentEstimateMode = 'benchmark';
+          vintageControl.hidden = false;
+          latestEstimateToggle.setAttribute('aria-pressed', 'false');
+          publishedBenchmarksToggle.setAttribute('aria-pressed', 'true');
+          estimateStatus.classList.add('is-benchmark');
+          estimateStatus.textContent = requestedSnapshotIndex === snapshots.length - 1 ? 'Published' : 'Archived';
+          const requestedSnapshot = requestedSnapshotIndex === snapshots.length - 1 ? quarterlyBenchmarkSnapshot : initialSnapshot;
+          renderCurrentVintage(requestedSnapshot, snapshots[initialSnapshotIndex-1] || null, false, false);
+        } else {
+          setEstimateMode('latest');
+        }
         if (requestedSharedView.hasParameters) syncSharedView();
       })
       .catch(error => {

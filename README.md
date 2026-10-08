@@ -6,9 +6,17 @@ Double-click `view-dashboard.cmd`. It starts a local-only web server, opens the 
 
 Keep the launcher window open while viewing the dashboard. Press Enter in that window to stop the server.
 
-The dashboard opens on the latest available snapshot. Use the snapshot selector
-to inspect any of the 59 reconstructed quarterly observations, compare each rule
+The dashboard opens on the latest available estimate without a historical selector.
+The **Published benchmarks** view contains the benchmark selector and distinguishes
+a provisional estimate recalculated from newer original-source observations from
+the frozen quarterly vintages used for reports, citations, and downloadable
+workbooks. When no newer provisional estimate exists, the latest estimate and most
+recent published benchmark are the same. Use the benchmark selector to inspect any
+of the 59 reconstructed quarterly observations, compare each rule
 benchmark with the prior snapshot, and review its historical target range. The
+Latest estimate view's **Data as of** date follows the freshest verified current
+information displayed, normally the latest available New York Fed EFFR observation;
+the technical-methodology drawer retains the separate rule-input dates.
 current lollipop chart and model table show the six Federal Reserve neutral-rate
 variants by default; **Show alternate neutral-rate estimates** reveals the six New
 York Fed model variants. The selected snapshot is marked on the historical chart,
